@@ -1,0 +1,50 @@
+@font-face {
+    font-family: "iconfont";
+    /* Project id  */
+    src: url('iconfont.ttf?t=1772371738328') format('truetype');
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-bofang:before {
+    content: "\e6af";
+    font-size: 18px;
+    font-weight: 900;
+    color: #ccc;
+    vertical-align: middle;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    margin-right: 0;
+}
+
+.icon-bofang {
+    position: relative;
+    display: block;
+    width: 100%;
+    text-align: right;
+}
+
+.icon-bofang:hover:before {
+    color: white;
+}
+
+.icon-erji:before {
+    content: "\e605";
+    font-size: 18px;
+    color: #ccc;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.icon-bofang1:before {
+    content: "\e610";
+    font-size: 50px;
+    color: #ccc;
+}

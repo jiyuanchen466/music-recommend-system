@@ -1,0 +1,23 @@
+@font-face {
+    font-family: "iconfont";
+    /* Project id  */
+    src: url('iconfont.ttf?t=1767077909973') format('truetype');
+}
+
+.iconfont.icon-youjiantou {
+    font-family: "iconfont" !important;
+    font-size: 30px;
+    color: red;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+    margin-left: -20px;
+    margin-top: -3px;
+}
+
+.icon-youjiantou:before {
+    content: "\e62c";
+}

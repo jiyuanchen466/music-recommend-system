@@ -1,0 +1,49 @@
+@font-face {
+    font-family: "iconfont8";
+    /* Project id  */
+    src: url('iconfont.ttf?t=1770357972430') format('truetype');
+}
+
+.iconfont8 {
+    font-family: "iconfont8" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-weixin:before {
+    content: "\f0106";
+    color: #999;
+    font-size: 50px;
+}
+
+.icon-weibo:before {
+    content: "\e63e";
+    color: #999;
+    font-size: 50px;
+}
+
+.icon-QQ:before {
+    content: "\e882";
+    color: #999;
+    font-size: 50px;
+}
+
+.icon-weixin1:before {
+    content: "\e665";
+    font-size: 50px;
+    color: #1AAD19;
+}
+
+.icon-weibo1:before {
+    content: "\e666";
+    font-size: 50px;
+    color: #d52c2b;
+}
+
+.icon-QQ1:before {
+    content: "\e667";
+    font-size: 50px;
+    color: #1296DB;
+}

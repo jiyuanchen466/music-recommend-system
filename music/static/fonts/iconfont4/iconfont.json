@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "3878696",
+      "name": "音乐",
+      "font_class": "vynil",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "12321189",
+      "name": "音乐",
+      "font_class": "yinle",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "12708826",
+      "name": "音乐",
+      "font_class": "yinle1",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    }
+  ]
+}

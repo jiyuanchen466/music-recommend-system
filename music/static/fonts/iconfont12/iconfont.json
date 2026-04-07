@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2076196",
+      "name": "赞",
+      "font_class": "zan",
+      "unicode": "e870",
+      "unicode_decimal": 59504
+    },
+    {
+      "icon_id": "26082650",
+      "name": "添加-1",
+      "font_class": "tianjia-1",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "42736108",
+      "name": "播放1",
+      "font_class": "bofang1",
+      "unicode": "e6d8",
+      "unicode_decimal": 59096
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "323877",
+      "name": "错误提示",
+      "font_class": "iconfonticonfontwarn",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "4649451",
+      "name": "正确实心",
+      "font_class": "zhengqueshixin",
+      "unicode": "e909",
+      "unicode_decimal": 59657
+    },
+    {
+      "icon_id": "8594072",
+      "name": "验证码",
+      "font_class": "yanzhengma",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    }
+  ]
+}

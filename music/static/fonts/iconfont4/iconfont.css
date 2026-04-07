@@ -1,0 +1,25 @@
+@font-face {
+    font-family: "iconfont";
+    /* Project id  */
+    src: url('iconfont.ttf?t=1766938187351') format('truetype');
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-size: 40px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-vynil:before {
+    content: "\e61f";
+}
+
+.icon-yinle:before {
+    content: "\e628";
+}
+
+.icon-yinle1:before {
+    content: "\e60d";
+}
