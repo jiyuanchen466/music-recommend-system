@@ -1,0 +1,590 @@
+@font-face {
+    font-family: "font5";
+    src: url('../fonts/font_cn_5.ttf');
+}
+
+body {
+    background: linear-gradient(to bottom right, #4b0141, #d1d46c) no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    user-select: none;
+    width: 900px;
+    height: 520px;
+    margin: 100px auto;
+    background-color: #f5f5f5;
+    box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.3);
+}
+
+.login-container {
+    display: block;
+}
+
+.register-container {
+    display: none;
+}
+
+.forget-container {
+    display: none;
+}
+
+#commen-img {
+    float: left;
+    width: 300px;
+    height: 100%;
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #ff0000, #ff7700, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) border-box;
+    background-size: 100% 100%, 400% 400%;
+    animation: border-color-change 3s ease infinite;
+}
+
+@keyframes border-color-change {
+    0% {
+        background-position: 100% 100%, 0% 50%;
+    }
+    50% {
+        background-position: 100% 100%, 100% 50%;
+    }
+    100% {
+        background-position: 100% 100%, 0% 50%;
+    }
+}
+
+#commen-img img {
+    width: 100%;
+    height: 100%;
+}
+
+.container .right-form {
+    float: left;
+    width: 600px;
+    height: 100%;
+}
+
+.container .left-form {
+    float: left;
+    width: 600px;
+    height: 100%;
+}
+
+.container .right-form h2 {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 50px;
+    color: #da129e;
+    letter-spacing: 50px;
+    margin-bottom: 20px;
+}
+
+.container .left-form h2 {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 50px;
+    color: #da129e;
+    letter-spacing: 50px;
+    margin-bottom: 20px;
+}
+
+.container .right-form form {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.container .right-form form label {
+    margin-left: 30px;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    font-family: 'KaiTi';
+    text-align: center;
+    line-height: 30px;
+}
+
+.container .right-form form input {
+    font-size: 20px;
+    font-family: 'KaiTi';
+    width: 300px;
+    height: 30px;
+    border: 2px solid black;
+    border-radius: 5px;
+    caret-color: transparent;
+}
+
+.container .left-form form {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.container .left-form form label {
+    margin-left: 30px;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    font-family: 'KaiTi';
+    text-align: center;
+    line-height: 30px;
+}
+
+.container .left-form form input {
+    font-size: 20px;
+    font-family: 'KaiTi';
+    width: 300px;
+    height: 30px;
+    border: 2px solid black;
+    border-radius: 5px;
+    caret-color: transparent;
+    vertical-align: middle;
+}
+
+.container .right-form form .yanzheng {
+    display: none;
+    user-select: none;
+    cursor: pointer;
+    margin-left: 80px;
+    width: 250px;
+    height: 30px;
+    font-size: 20px;
+    border: 2px solid #777;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 30px;
+    color: yellow;
+    background-color: #00ffff;
+    margin-bottom: 30px;
+}
+
+.container .right-form form .remember {
+    margin-top: -20px;
+    margin-left: 35px;
+    width: 100px;
+    height: 30px;
+    font-size: 15px;
+}
+
+.container .right-form form .remember input {
+    vertical-align: middle;
+    width: 15px;
+    height: 15px;
+}
+
+.container .right-form form .remember label {
+    margin-left: 5px;
+    font-size: 15px;
+    color: #888;
+}
+
+#yanjing {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+#yanjing1 {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+#yanjing2 {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.container .right-form form .login-btn {
+    width: 200px;
+    height: 35px;
+    margin-top: -20px;
+    margin-left: 110px;
+    font-size: 20px;
+    letter-spacing: 10px;
+    border: 0;
+    border-radius: 5px;
+    background-color: rgb(227, 117, 227);
+    color: white;
+    cursor: not-allowed;
+}
+
+.container .right-form form .forget-password {
+    width: 100px;
+    height: 20px;
+    font-size: 12px;
+    margin-left: 180px;
+    margin-top: 10px;
+    cursor: pointer;
+    color: blue;
+}
+
+.container .right-form form .forget-password:hover {
+    text-decoration: underline;
+    color: red;
+}
+
+.container .right-form form .register-link {
+    width: 190px;
+    height: 20px;
+    font-size: 14px;
+    margin-left: 400px;
+    margin-top: 100px;
+    color: #555;
+}
+
+.container .right-form form .register-link a {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.container .right-form form .register-link a:hover {
+    color: red;
+}
+
+.verify-window {
+    user-select: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(1px);
+    display: none;
+}
+
+.verify-window .verify-box {
+    width: 410px;
+    height: 500px;
+    background-color: white;
+    margin: 120px auto;
+}
+
+.verify-window .verify-box .verify-title {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 15px;
+    padding-left: 10px;
+}
+
+.verify-window .verify-box .verify-title .verify-content {
+    margin-left: 5px;
+    font-size: 35px;
+    font-family: 'font5';
+}
+
+.verify-window .verify-box .verify-mid {
+    width: 100%;
+    height: 400px;
+    padding: 10px;
+}
+
+.verify-window .verify-box .verify-mid .verify-img {
+    position: absolute;
+    width: 390px;
+    height: 380px;
+    border: 1px solid gray;
+}
+
+.verify-window .verify-footer {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+}
+
+.verify-window .verify-footer .verify-footer-left {
+    float: left;
+    margin-left: 10px;
+}
+
+.verify-window .verify-footer .verify-footer-left i {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+.verify-window .verify-footer .verify-footer-left i:nth-child(1) {
+    margin-right: 10px;
+}
+
+.verify-window .verify-footer .verify-footer-right {
+    float: right;
+    margin-right: 10px;
+}
+
+.verify-window .verify-footer .verify-footer-right button {
+    width: 100px;
+    height: 30px;
+    font-size: 15px;
+    border: 0;
+    border-radius: 5px;
+    background-color: pink;
+    color: white;
+    cursor: not-allowed;
+}
+
+.verify-window .verify-box .verify-mid .verify-error {
+    display: none;
+    margin-top: -30px;
+    width: 390px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 15px;
+    color: white;
+    background-color: rgba(255, 0, 0, 0.7);
+}
+
+.verify-window .verify-box .verify-mid .verify-success {
+    display: none;
+    margin-top: -30px;
+    width: 390px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 15px;
+    color: white;
+    background-color: rgba(0, 128, 0, 0.7);
+}
+
+.email-end {
+    display: inline-block;
+    width: 150px;
+    height: 30px;
+    font-size: 20px;
+    border: 0;
+    border-radius: 5px;
+    vertical-align: middle;
+    line-height: 21px;
+    text-align: center;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.email-code-btn {
+    display: inline-block;
+    margin-left: 30px;
+    width: 120px;
+    height: 30px;
+    font-size: 15px;
+    border: 2px solid #000;
+    border-radius: 5px;
+    line-height: 25px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: not-allowed;
+    pointer-events: none;
+    color: white;
+    background-color: #666;
+}
+
+.left-form form .register-btn {
+    width: 200px;
+    height: 35px;
+    margin-top: 10px;
+    margin-left: 110px;
+    font-size: 20px;
+    letter-spacing: 10px;
+    border: 0;
+    border-radius: 5px;
+    background-color: rgb(227, 117, 227);
+    color: white;
+    cursor: pointer;
+}
+
+.login-link {
+    margin-left: -30px;
+    margin-top: 30px;
+}
+
+.login-link a {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.login-link a:hover {
+    color: red;
+}
+
+.message {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 15px;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+    background-color: white;
+}
+
+.success-bg {
+    background-color: rgba(0, 128, 0, 0.6);
+}
+
+.error-bg {
+    background-color: rgba(255, 0, 0, 0.6);
+}
+
+.message-success {
+    display: none;
+}
+
+.message-error {
+    display: none;
+}
+
+.forget-container h2 {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    font-size: 30px;
+    text-align: center;
+    color: #666;
+}
+
+.forget-container .find-process {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    color: gray;
+    font-size: 15px;
+}
+
+.current-step {
+    color: #000;
+}
+
+.find-step {
+    width: 100%;
+    height: 400px;
+    padding: 50px 140px;
+}
+
+.find-step label {
+    margin-left: 100px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 30px;
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.find-step input {
+    width: 300px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 18px;
+    font-family: 'KaiTi';
+    border: 2px solid black;
+    vertical-align: middle;
+    box-sizing: border-box;
+    margin-top: 0;
+}
+
+.find-step .find-btn {
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 18px;
+    border: 0;
+    background-color: rgba(0, 255, 255, 0.4);
+    color: black;
+    cursor: not-allowed;
+    margin-left: 550px;
+    margin-top: 200px;
+}
+
+.find-step2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.find-step2 .find-step-pair {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.find-step2 label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 24px;
+    text-align: center;
+    margin-right: 10px;
+    margin-top: -10px;
+}
+
+.find-step2 input {
+    width: 300px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 18px;
+    font-family: 'KaiTi';
+    border: 2px solid black;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.find-step2 .find-email-btn {
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    margin-left: 10px;
+    cursor: pointer;
+    vertical-align: middle;
+    align-self: flex-start;
+}
+
+.find-step1 {
+    display: block;
+}
+
+.find-step2 {
+    display: none;
+}
+
+.find-step3 {
+    display: none;
+}
+
+.find-step4 {
+    display: none;
+    text-align: center;
+    color: gray;
+}
+
+.find-step4 a {
+    color: red;
+}
+
+.forget-back-btn {
+    position: relative;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+}
