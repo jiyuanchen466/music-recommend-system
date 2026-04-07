@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 炫音娱乐</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_page.css' %}">
+    <link rel="icon" href="{% static 'imgs/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont18/iconfont.css' %}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 左侧菜单栏 -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'imgs/admin_avatar.png' %}" alt="admin_avatar" class="admin-avatar">
+                <p class="admin-label">管理员</p>
+            </div>
+
+            <nav class="sidebar-menu">
+                <!-- 音乐数据 -->
+                <div class="menu-item">
+                    <div class="menu-title" data-module="music">
+                        <span>音乐数据</span>
+                        <i class="menu-arrow">></i>
+                    </div>
+                    <ul class="submenu" id="submenu-music" style="display: none;">
+                        <li><a href="#" data-page="all_music">全部数据</a></li>
+                        <li><a href="#" data-page="soaring_music">飙升榜数据</a></li>
+                        <li><a href="#" data-page="new_music">新歌榜数据</a></li>
+                        <li><a href="#" data-page="hot_music">热歌榜数据</a></li>
+                        <li><a href="#" data-page="mandarin_music">国语榜数据</a></li>
+                        <li><a href="#" data-page="western_music">欧美榜数据</a></li>
+                        <li><a href="#" data-page="korean_music">韩语榜数据</a></li>
+                        <li><a href="#" data-page="japanese_music">日语榜数据</a></li>
+                    </ul>
+                </div>
+
+                <!-- 用户数据 -->
+                <div class="menu-item">
+                    <div class="menu-title" data-module="user">
+                        <span>用户数据</span>
+                        <i class="menu-arrow">></i>
+                    </div>
+                    <ul class="submenu" id="submenu-user" style="display: none;">
+                        <li><a href="#" data-page="normal_user">普通用户</a></li>
+                        <li><a href="#" data-page="creator_user">创作者用户</a></li>
+                        <li><a href="#" data-page="user_community">用户社区</a></li>
+                        <li><a href="#" data-page="user_music_lib">用户音乐库</a></li>
+                        <li><a href="#" data-page="creator_music_lib">创作者音乐库</a></li>
+                    </ul>
+                </div>
+
+                <!-- 评论数据 -->
+                <div class="menu-item">
+                    <div class="menu-title" data-module="comment">
+                        <span>评论数据</span>
+                        <i class="menu-arrow">></i>
+                    </div>
+                    <ul class="submenu" id="submenu-comment" style="display: none;">
+                        <li><a href="#" data-page="soaring_comment">飙升榜评论</a></li>
+                        <li><a href="#" data-page="new_comment">新歌榜评论</a></li>
+                        <li><a href="#" data-page="hot_comment">热歌榜评论</a></li>
+                        <li><a href="#" data-page="mandarin_comment">国语榜评论</a></li>
+                        <li><a href="#" data-page="western_comment">欧美榜评论</a></li>
+                        <li><a href="#" data-page="korean_comment">韩语榜评论</a></li>
+                        <li><a href="#" data-page="japanese_comment">日语榜评论</a></li>
+                    </ul>
+                </div>
+
+                <!-- 数据分析 -->
+                <div class="menu-item">
+                    <div class="menu-title" data-module="analysis">
+                        <span>数据分析</span>
+                        <i class="menu-arrow">></i>
+                    </div>
+                    <ul class="submenu" id="submenu-analysis" style="display: none;">
+                        <li><a href="#" data-page="user_distribution">用户分布分析</a></li>
+                        <li><a href="#" data-page="rank_trend">音乐热度分析</a></li>
+                        <li><a href="#" data-page="music_popularity">榜单趋势分析</a></li>
+                        <li><a href="#" data-page="user_active">用户活跃度</a></li>
+                        <li><a href="#" data-page="hmm_analysis">HMM 隐状态分析</a></li>
+                    </ul>
+                </div>
+
+                <!-- 登出按钮 -->
+                <div class="menu-logout">
+                    <a href="{% url 'admin_logout' %}" class="logout-btn">登出</a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h1 id="page-title">欢迎使用管理后台</h1>
+                <div class="header-info">
+                    <span class="admin-info">{{ admin_username }}</span>
+                    <span class="current-time" id="current-time"></span>
+                </div>
+            </div>
+
+            <!-- 内容容器 -->
+            <div class="content-body" id="content-body">
+                <div class="welcome-section">
+                    <h2>欢迎来到管理后台</h2>
+                    <p>请在左侧菜单中选择相应的模块进行管理</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+    <script src="{% static 'js/admin_page_real.js' %}"></script>
+</body>
+</html>

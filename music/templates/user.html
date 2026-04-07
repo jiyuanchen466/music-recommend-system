@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>炫音娱乐 - 用户中心</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="icon" href="{% static 'imgs/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/user.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont8/iconfont.css' %}">
+    <style>
+        /* 密码输入框样式 */
+        #password {
+            letter-spacing: normal;
+            font-family: inherit;
+        }
+        
+        /* 错误提示样式 */
+        .error-message {
+            background-color: #ffe6e6;
+            padding: 20px;
+            margin: 20px;
+            border-left: 4px solid #ff4444;
+            color: #cc0000;
+        }
+        
+        /* 昵称输入框可编辑样式 */
+        #nickname[disabled] {
+            background-color: transparent;
+            border: 1px solid #ddd;
+            cursor: not-allowed;
+        }
+        
+        #nickname:not([disabled]) {
+            background-color: #fff;
+            border: 1px solid #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* 编辑按钮样式 */
+        #edit-nickname-btn {
+            padding: 8px 20px;
+            cursor: pointer;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            margin-left: -10px;
+        }
+        
+        #edit-nickname-btn:hover {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        #edit-nickname-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 用户名称容器 */
+        .user-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 创作者协议模态框 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .modal-close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .agreement-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .agreement-text h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .agreement-text h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .agreement-text p {
+            margin: 10px 0;
+            text-align: justify;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e8e8e8;
+            background-color: #f9f9f9;
+        }
+
+        .agreement-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .agreement-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .agreement-checkbox span {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #cancel-btn {
+            background-color: #e8e8e8;
+            color: #333;
+        }
+
+        #cancel-btn:hover {
+            background-color: #d0d0d0;
+        }
+
+        #confirm-btn {
+            background-color: #667eea;
+            color: white;
+        }
+
+        #confirm-btn:hover:not(:disabled) {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        #confirm-btn:disabled {
+            background-color: #ccc;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* 已成为创作者状态 */
+        .apply-creator.creator-status {
+            background-color: #28a745;
+            cursor: default;
+        }
+
+        .apply-creator.creator-status:hover {
+            background-color: #28a745;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left" href="#">
+            <img src="{% static 'imgs/brand.png' %}" alt="logo" class="logo">
+            <div class="brand-name">
+                <p class="cn"><span>炫</span><span>音</span><span>娱</span><span>乐</span></p>
+                <p class="en">SONYXIAN</p>
+            </div>
+        </div>
+    </div>
+    
+    {% if error %}
+    <div class="error-message">
+        <h2>⚠️ 错误提示</h2>
+        <p>{{ error }}</p>
+        <p>当前访问的用户 ID: {{ current_user_id }}</p>
+    </div>
+    {% else %}
+    
+    <div class="main">
+        <div class="title">基本信息</div>
+        <div class="main-one">
+            <div class="avatar" title="点击更换头像">
+                <!-- 在用户头像标签中添加动态参数 -->
+                <img id="user-avatar" src="http://127.0.0.1:8000/avatar/{{ user.user_id }}/" alt="用户头像" class="user-avatar" onerror="this.src='/static/imgs/hp1.png'">
+            </div>
+            <div class="user-name">
+                <input type="text" id="nickname" value="{{ user.nickname|default:'' }}" placeholder="请输入昵称" disabled>
+                <button type="button" id="edit-nickname-btn" onclick="toggleNicknameEdit()">编辑</button>
+            </div>
+        </div>
+        <div class="main-two">
+            <label for="gender">性别:</label>
+            男&nbsp;&nbsp;<input type="radio" name="gender" id="gender-male" value="0" {% if user.gender == '0' %}checked{% endif %}>
+            &nbsp;&nbsp;女&nbsp;&nbsp;<input type="radio" name="gender" id="gender-female" value="1" {% if user.gender == '1' %}checked{% endif %}>
+            &nbsp;&nbsp;保密&nbsp;&nbsp;<input type="radio" name="gender" id="gender-secret" value="" {% if user.gender == '' %}checked{% endif %}>
+        </div>
+        <div class="main-three">
+            <label for="birthday">生日:</label>
+            <select id="birth-year" name="birth-year"></select>年
+            <select id="birth-month" name="birth-month"></select>月
+            <select id="birth-day" name="birth-day"></select>日
+        </div>
+        <div class="main-four">
+            <label for="region">地区:</label>
+            <select id="region-province" name="region-province">
+                <option value="">请选择省份</option>
+                {% for province in provinces %}
+                <option value="{{ province }}" {% if user.region == province %}selected{% endif %}>{{ province }}</option>
+                {% endfor %}
+            </select>
+            <select id="region-city" name="region-city">
+                <option value="">请选择城市</option>
+            </select>
+        </div>
+        <div class="main-five">
+            <label for="introduce">介绍:</label>
+            <textarea id="introduce" name="introduce" rows="4" cols="50" placeholder="本人很懒，什么都没留下...">{{ user.introduce|default:"" }}</textarea>
+        </div>
+        <div class="main-six">
+            <button id="save" disabled>保存</button>
+        </div>
+        <div class="title">账号设置</div>
+        <div class="main-seven">
+            <label for="username">账号:</label>
+            <input type="text" id="username" name="username" value="{{ user.username|default:'' }}" disabled>
+        </div>
+        <div class="main-eight">
+            <label for="email">邮箱:</label>
+            <input type="email" id="email" name="email" value="{{ user.email|default:'' }}" disabled>
+        </div>
+        <div class="main-nine">
+            <label for="password">密码:</label>
+            <input type="password" id="password" name="password" value="{{ user.password|default:'' }}" ondblclick="showPassword()" onkeypress="if(event.key === 'Enter') savePassword()">
+        </div>
+        <div class="main-ten">
+            <div class="apply-creator" id="apply-creator-btn">
+                {% if user.is_creator %}
+                    已经成为创作者
+                {% else %}
+                    申请成为创作者
+                {% endif %}
+            </div>
+        </div>
+        <div class="main-eleven">
+            <button id="cancel-account">注销账户</button>
+            <button id="logout">退出登录</button>
+        </div>
+    </div>
+    
+    {% endif %}
+    
+    <!-- 创作者协议模态框 -->
+    <div id="creator-agreement-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>音乐创作者入驻协议</h2>
+                <span class="modal-close" onclick="closeCreatorModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="agreement-text">
+                    <h3>音乐创作者入驻协议（抽象版）</h3>
+                    <p>在数字与声音交汇之处，本平台作为连接表达与聆听的媒介，向所有愿意以旋律书写世界的个体开放。申请成为音乐创作者，即意味着你将以声音为语言，参与一场持续生成的文化对话。</p>
+                    
+                    <h4>一、<strong>身份与表达</strong></h4>
+                    <p>你确认自身为作品之源，或拥有其合法表达权。所有上传之内容，不仅是音符的排列，更是思想与情感的投射。本平台尊重每一份表达的独立性，同时保留对其在公共空间中呈现方式的解释权。</p>
+                    
+                    <h4>二、<strong>内容与边界</strong></h4>
+                    <p>创作应当流动，但不应越界。你所发布的一切声音与相关内容，应在开放与秩序之间保持平衡。平台不对创作设限，但对其传播承担基本的审视责任。</p>
+                    
+                    <h4>三、<strong>推荐与可见性</strong></h4>
+                    <p>作品将被纳入算法的河流之中，经由用户偏好、行为轨迹与未知的偶然性，被重新分配与抵达。推荐并非承诺，而是一种动态关系的映射。你理解并接受作品的可见性具有不确定性。</p>
+                    
+                    <h4>四、<strong>数据与反馈</strong></h4>
+                    <p>每一次播放、停留与跳过，都会成为对作品的回应。你同意这些反馈被抽象、统计，并反向塑造推荐机制。本平台不保证反馈的意义，但承认其存在的价值。</p>
+                    
+                    <h4>五、<strong>权利与授权</strong></h4>
+                    <p>你授予平台在其服务范围内对作品进行展示、传播与必要形式转化的权利。这种授权是非独占的，但在有效期内具有连续性与整体性。</p>
+                    
+                    <h4>六、<strong>演化与变更</strong></h4>
+                    <p>平台与协议本身皆处于不断演化之中。当规则发生改变时，创作者与平台之间的关系也将被重新定义。继续使用服务，即视为对新秩序的默认接受。</p>
+                    
+                    <h4>七、<strong>终止与回声</strong></h4>
+                    <p>当你选择离开，或被动退出，部分内容可能继续以数据或记忆的形式存在于系统之中。声音不会完全消失，它可能以另一种形式回响。</p>
+                    
+                    <p style="margin-top: 30px; text-align: center; color: #999; font-style: italic;">——</p>
+                    <p style="text-align: center; margin-top: 20px;">当你点击"同意"，你并非仅加入一个平台，而是进入一个关于声音、算法与人之间关系的持续实验。</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <label class="agreement-checkbox">
+                    <input type="checkbox" id="agreement-checkbox">
+                    <span>您是否愿意系统维护者的走狗</span>
+                </label>
+                <div class="modal-buttons">
+                    <button id="cancel-btn" onclick="closeCreatorModal()">取消</button>
+                    <button id="confirm-btn" onclick="submitCreatorAgreement()" disabled>确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div class="left-footer">
+            <h3>特色服务</h3>
+            <ul>
+                <li><a href="#">AI 免费写歌</a></li></br>
+                <li><a href="#">音乐推 - 歌曲推广</a></li></br>
+                <li><a href="#">炫音 KTV</a></li></br>
+                <li><a href="#">音乐开放平台</a></li></br>
+                <li><a href="#">至尊音乐人</a></li>
+            </ul>
+        </div>
+        <div class="middle-footer">炫音娱乐</div>
+        <div class="right-footer">
+            <a class="weibo"><i class="iconfont8 icon-weibo"></i></a>
+            <a class="weixin"><i class="iconfont8 icon-weixin"></i></a>
+            <a class="qq"><i class="iconfont8 icon-QQ"></i></a>
+            <div class="weibo-qrcode-box">
+                <div class="weibo-qrcode-tri"></div>
+                <div class="weibo-qrcode"><img src="{% static 'imgs/weibo-qrcode.png' %}" alt="weibo-qrcode"></div>
+            </div>
+            <div class="weixin-qrcode-box">
+                <div class="weixin-qrcode-tri"></div>
+                <div class="weixin-qrcode"><img src="{% static 'imgs/weixin-qrcode.png' %}" alt="weixin-qrcode"></div>
+            </div>
+            <div class="qq-qrcode-box">
+                <div class="qq-qrcode-tri"></div>
+                <div class="qq-qrcode"><img src="{% static 'imgs/qq-qrcode.png' %}" alt="qq-qrcode"></div>
+            </div>
+        </div>
+        <div class="application-info"><a href="#">关于我们</a> | <a href="#">隐私条款</a> | <a href="#">使用协议</a> | <a href="#">版权声明</a> | <a href="#">意见反馈</a> | <a href="#">客服中心</a> | <a href="#">联系我们</a> | <a href="#">友情链接</a> | <a href="#">帮助中心</a></div>
+        <p class="copyright">Copyright © 2026 - SONYXIAN. All Rights Reserved.</p>
+        <div class="record-info">炫音娱乐 <a href="#">版权所有</a> | 违法与不良信息举报邮箱：<a href="#">caspar466@163.com</a></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script>
+        // 地区数据
+        const china_divisions = {
+            '北京': ['北京市'],
+            '天津': ['天津市'],
+            '上海': ['上海市'],
+            '重庆': ['重庆市'],
+            '河北': ['石家庄市', '唐山市', '秦皇岛市', '邯郸市', '邢台市', '保定市', '张家口市', '承德市', '沧州市', '廊坊市', '衡水市'],
+            '山西': ['太原市', '大同市', '朔州市', '阳泉市', '长治市', '晋城市', '忻州市', '吕梁市', '晋中市', '临汾市', '运城市'],
+            '辽宁': ['沈阳市', '大连市', '鞍山市', '抚顺市', '本溪市', '丹东市', '锦州市', '营口市', '阜新市', '辽阳市', '盘锦市', '铁岭市', '朝阳市', '葫芦岛市'],
+            '吉林': ['长春市', '吉林市', '四平市', '辽源市', '通化市', '白山市', '松原市', '白城市', '延边朝鲜族自治州'],
+            '黑龙江': ['哈尔滨市', '齐齐哈尔市', '鸡西市', '鹤岗市', '双鸭山市', '大庆市', '伊春市', '佳木斯市', '七台河市', '牡丹江市', '黑河市', '绥化市', '大兴安岭地区'],
+            '江苏': ['南京市', '无锡市', '徐州市', '常州市', '苏州市', '南通市', '连云港市', '淮安', '盐城市', '扬州市', '镇江市', '泰州市', '宿迁市'],
+            '浙江': ['杭州市', '宁波市', '温州市', '嘉兴市', '湖州市', '绍兴市', '金华市', '衢州市', '舟山市', '台州市', '丽水市'],
+            '安徽': ['合肥市', '芜湖市', '蚌埠市', '淮南市', '马鞍山市', '淮北市', '铜陵市', '安庆市', '黄山市', '滁州市', '阜阳市', '宿州市', '六安市', '亳州市', '池州市', '宣城市'],
+            '福建': ['福州市', '厦门市', '莆田市', '三明市', '泉州市', '漳州市', '南平市', '龙岩市', '宁德市'],
+            '江西': ['南昌市', '景德镇市', '萍乡市', '九江市', '新余市', '鹰潭市', '赣州市', '吉安市', '宜春市', '抚州市', '上饶市'],
+            '山东': ['济南市', '青岛市', '淄博市', '枣庄市', '东营市', '烟台市', '潍坊市', '济宁市', '泰安市', '威海市', '日照市', '临沂市', '德州市', '聊城市', '滨州市', '菏泽市'],
+            '河南': ['郑州市', '开封市', '洛阳市', '平顶山市', '安阳市', '鹤壁市', '新乡市', '焦作市', '濮阳市', '许昌市', '漯河市', '三门峡市', '南阳市', '商丘市', '信阳市', '周口市', '驻马店市', '济源市'],
+            '湖北': ['武汉市', '黄石市', '十堰市', '宜昌市', '襄阳市', '鄂州市', '荆门市', '孝感市', '荆州市', '黄冈市', '咸宁市', '随州市', '恩施土家族苗族自治州', '仙桃市', '潜江市', '天门市', '神农架林区'],
+            '湖南': ['长沙市', '株洲市', '湘潭市', '衡阳市', '邵阳市', '岳阳市', '常德市', '张家界市', '益阳市', '郴州市', '永州市', '怀化市', '娄底市', '湘西土家族苗族自治州'],
+            '广东': ['广州市', '韶关市', '深圳市', '珠海市', '汕头市', '佛山市', '江门市', '湛江市', '茂名市', '肇庆市', '惠州市', '梅州市', '汕尾市', '河源市', '阳江市', '清远市', '东莞市', '中山市', '潮州市', '揭阳市', '云浮市'],
+            '广西': ['南宁市', '柳州市', '桂林市', '梧州市', '北海市', '防城港市', '钦州市', '贵港市', '玉林市', '百色市', '贺州市', '河池市', '来宾市', '崇左市'],
+            '海南': ['海口市', '三亚市', '三沙市', '儋州市', '五指山市', '文昌市', '琼海市', '万宁市', '东方市'],
+            '四川': ['成都市', '自贡市', '攀枝花市', '泸州市', '德阳市', '绵阳市', '广元市', '遂宁市', '内江市', '乐山市', '南充市', '眉山市', '宜宾市', '广安市', '达州市', '雅安市', '巴中市', '资阳市', '阿坝藏族羌族自治州', '甘孜藏族自治州', '凉山彝族自治州'],
+            '贵州': ['贵阳市', '六盘水市', '遵义市', '安顺市', '毕节市', '铜仁市', '黔西南布依族苗族自治州', '黔东南苗族侗族自治州', '黔南布依族苗族自治州'],
+            '云南': ['昆明市', '曲靖市', '玉溪市', '保山市', '昭通市', '丽江市', '普洱市', '临沧市', '楚雄彝族自治州', '红河哈尼族彝族自治州', '文山壮族苗族自治州', '西双版纳傣族自治州', '大理白族自治州', '德宏傣族景颇族自治州', '怒江傈僳族自治州', '迪庆藏族自治州'],
+            '西藏': ['拉萨市', '日喀则市', '昌都市', '林芝市', '山南市', '那曲市', '阿里地区'],
+            '陕西': ['西安市', '铜川市', '宝鸡市', '咸阳市', '渭南市', '延安市', '汉中市', '榆林市', '安康市', '商洛市'],
+            '甘肃': ['兰州市', '嘉峪关市', '金昌市', '白银市', '天水市', '武威市', '张掖市', '平凉市', '酒泉市', '庆阳市', '定西市', '陇南市', '临夏回族自治州', '甘南藏族自治州'],
+            '青海': ['西宁市', '海东市', '海北藏族自治州', '黄南藏族自治州', '海南藏族自治州', '果洛藏族自治州', '玉树藏族自治州', '海西蒙古族藏族自治州'],
+            '宁夏': ['银川市', '石嘴山市', '吴忠市', '固原市', '中卫市'],
+            '新疆': ['乌鲁木齐市', '克拉玛依市', '吐鲁番市', '哈密市', '昌吉回族自治州', '博尔塔拉蒙古自治州', '巴音郭楞蒙古自治州', '阿克苏地区', '克孜勒苏柯尔克孜自治州', '喀什地区', '和田地区', '伊犁哈萨克自治州', '塔城地区', '阿勒泰地区', '石河子市', '阿拉尔市', '图木舒克市', '五家渠市', '北屯市', '铁门关市', '双河市', '可克达拉市', '昆玉市'],
+            '内蒙古': ['呼和浩特市', '包头市', '乌海市', '赤峰市', '通辽市', '鄂尔多斯市', '呼伦贝尔市', '巴彦淖尔市', '乌兰察布市', '兴安盟', '锡林郭勒盟', '阿拉善盟'],
+            '台湾': ['台北市', '新北市', '桃园市', '台中市', '台南市', '高雄市', '基隆市', '新竹市', '嘉义市'],
+            '香港': ['香港特别行政区'],
+            '澳门': ['澳门特别行政区'],
+            '海外': ['海外']
+        };
+
+        // 当前用户数据
+        const currentUser = {
+            user_id: '{{ user.user_id|default:"" }}',
+            username: '{{ user.username|default:"" }}',
+            nickname: '{{ user.nickname|default:"" }}',
+            gender: '{{ user.gender|default:"" }}',
+            birthday: '{{ user.birthday|default:"" }}',
+            region: '{{ user.region|default:"" }}',
+            region_province: '{{ user.region_province|default:"" }}',
+            region_city: '{{ user.region_city|default:"" }}',
+            introduce: '{{ user.introduce|default:"" }}',
+            email: '{{ user.email|default:"" }}',
+            password: '{{ user.password|default:"" }}',
+            avatar: 'http://127.0.0.1:8000/avatar/{{ user.user_id }}/'
+        };
+
+        console.log('当前用户数据:', currentUser);
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 用户页面初始化 ===');
+            console.log('当前用户:', currentUser);
+            
+            // 初始化生日选择（优先使用）
+            initBirthdaySelect();
+            
+            // 初始化省份选择
+            initProvinceSelect();
+            
+            // 初始检查一次
+            checkSaveButton();
+            
+            console.log('=== 初始化完成 ===');
+        });
+
+        // 显示/隐藏密码
+        function showPassword() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                setTimeout(() => {
+                    passwordInput.type = 'password';
+                }, 5000);
+            }
+        }
+
+        // 保存密码 - 按回车键触发
+        function savePassword() {
+            const newPassword = document.getElementById('password').value;
+            if (newPassword && newPassword !== '{{ user.password }}') {
+                if (confirm('确定要修改密码吗？')) {
+                    console.log('准备更新密码...');
+                    
+                    fetch('/update_password/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            password: newPassword
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('响应数据:', data);
+                        if (data.success) {
+                            alert('密码更新成功！');
+                            location.reload();
+                        } else {
+                            alert('更新失败：' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('网络错误');
+                    });
+                }
+            }
+        }
+
+        // 初始化省份选择
+        function initProvinceSelect() {
+            const provinceSelect = document.getElementById('region-province');
+            const citySelect = document.getElementById('region-city');
+            
+            if (!provinceSelect || !citySelect) {
+                console.error('找不到省份或城市选择框');
+                return;
+            }
+
+            // 如果用户有省份信息，先加载对应的城市列表
+            if (currentUser.region_province) {
+                loadCities(currentUser.region_province, currentUser.region_city);
+                provinceSelect.value = currentUser.region_province;
+                console.log('已加载省份:', currentUser.region_province, '城市:', currentUser.region_city);
+            }
+
+            // 监听省份变化
+            provinceSelect.addEventListener('change', function() {
+                const selectedProvince = this.value;
+                loadCities(selectedProvince, '');
+                checkSaveButton();
+            });
+        }
+
+        // 加载城市列表
+        function loadCities(province, selectedCity = '') {
+            const citySelect = document.getElementById('region-city');
+            citySelect.innerHTML = '<option value="">请选择城市</option>';
+            
+            if (province && china_divisions[province]) {
+                china_divisions[province].forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    // 如果有预设的城市值，设置为选中
+                    if (city === selectedCity) {
+                        option.selected = true;
+                        console.log('已选中城市:', city);
+                    }
+                    citySelect.appendChild(option);
+                });
+            }
+        }
+
+        // 初始化生日选择
+        function initBirthdaySelect() {
+            const yearSelect = document.getElementById('birth-year');
+            const monthSelect = document.getElementById('birth-month');
+            const daySelect = document.getElementById('birth-day');
+
+            if (!yearSelect || !monthSelect || !daySelect) {
+                console.error('找不到生日选择框');
+                return;
+            }
+
+            // 获取当前日期
+            const now = new Date();
+            const currentYear = now.getFullYear();
+
+            // 填充年份（1900-当前年份）
+            for (let year = 1900; year <= currentYear; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+
+            // 填充月份
+            for (let month = 1; month <= 12; month++) {
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = month + '月';
+                monthSelect.appendChild(option);
+            }
+
+            // 填充日期
+            for (let day = 1; day <= 31; day++) {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day + '日';
+                daySelect.appendChild(option);
+            }
+
+            // 设置当前用户的生日
+            if (currentUser.birthday && currentUser.birthday.trim() !== '' && currentUser.birthday !== 'None') {
+                console.log('解析生日:', currentUser.birthday);
+                const birthdayParts = currentUser.birthday.split('-');
+                if (birthdayParts.length === 3) {
+                    const year = birthdayParts[0].trim();
+                    const month = parseInt(birthdayParts[1].trim());
+                    const day = parseInt(birthdayParts[2].trim());
+                    
+                    console.log(`生日解析结果：年=${year}, 月=${month}, 日=${day}`);
+                    
+                    // 验证日期是否有效
+                    if (year >= 1900 && year <= currentYear &&
+                        month >= 1 && month <= 12 &&
+                        day >= 1 && day <= 31) {
+                        yearSelect.value = year;
+                        monthSelect.value = month;
+                        
+                        // 更新该月的天数并设置日期
+                        updateDays(year, month, day);
+                        
+                        console.log(`生日已设置：${yearSelect.value}年${monthSelect.value}月${daySelect.value}日`);
+                    } else {
+                        console.warn('无效的生日数据:', currentUser.birthday);
+                    }
+                } else {
+                    console.warn('生日格式不正确:', currentUser.birthday);
+                }
+            } else {
+                console.log('用户没有设置生日或生日为空');
+            }
+            
+            // 监听变化
+            yearSelect.addEventListener('change', () => updateDaysAndCheck(yearSelect.value, monthSelect.value));             
+            monthSelect.addEventListener('change', () => updateDaysAndCheck(yearSelect.value, monthSelect.value));             
+            daySelect.addEventListener('change', checkSaveButton);
+        }
+
+        // 更新天数并检查保存按钮
+        function updateDaysAndCheck(year, month) {
+            updateDays(year, month);
+            checkSaveButton();
+        }
+
+        // 更新天数选择
+        function updateDays(year, month, selectedDay) {
+            const daySelect = document.getElementById('birth-day');
+            
+            if (!year || !month) return;
+            
+            const daysInMonth = new Date(year, month, 0).getDate();
+            
+            daySelect.innerHTML = '<option value="">--</option>';
+            
+            for (let d = 1; d <= daysInMonth; d++) {
+                const option = document.createElement('option');
+                option.value = d;
+                option.textContent = d + '日';
+                daySelect.appendChild(option);
+            }
+            
+            // 设置选中的日期
+            if (selectedDay && selectedDay <= daysInMonth) {
+                daySelect.value = selectedDay;
+                console.log(`设置日期为：${selectedDay}日`);
+            }
+        }
+
+        // 检查是否有改动
+        function checkSaveButton() {
+            const nickname = document.getElementById('nickname').value;
+            
+            let gender = '';
+            if (document.getElementById('gender-male').checked) gender = '0';
+            else if (document.getElementById('gender-female').checked) gender = '1';
+            
+            const birthYear = document.getElementById('birth-year').value;
+            const birthMonth = document.getElementById('birth-month').value;
+            const birthDay = document.getElementById('birth-day').value;
+            const birthday = birthYear && birthMonth && birthDay ?
+                `${birthYear}-${String(birthMonth).padStart(2, '0')}-${String(birthDay).padStart(2, '0')}` : '';
+            
+            // 获取选择的省份和城市
+            const regionProvince = document.getElementById('region-province').value;
+            const regionCity = document.getElementById('region-city').value;
+            // 将省份和城市组合成完整的地区字符串
+            const region = regionProvince && regionCity ? `${regionProvince} ${regionCity}` : regionProvince;
+            
+            const introduce = document.getElementById('introduce').value;
+
+            const hasChanges = (
+                nickname !== currentUser.nickname ||
+                gender !== currentUser.gender ||
+                birthday !== currentUser.birthday ||
+                region !== currentUser.region ||
+                introduce !== currentUser.introduce
+            );
+
+            const saveBtn = document.getElementById('save');
+            saveBtn.disabled = !hasChanges;
+            saveBtn.style.backgroundColor = hasChanges ? 'yellowgreen' : 'rgba(128, 128, 128, 0.4)';
+            saveBtn.style.color = hasChanges ? '#fff' : '#555';
+            saveBtn.style.cursor = hasChanges ? 'pointer' : 'not-allowed';
+            
+            console.log('检查保存按钮:', {
+                nickname: nickname !== currentUser.nickname,
+                gender: gender !== currentUser.gender,
+                birthday: birthday !== currentUser.birthday,
+                region: region !== currentUser.region,
+                introduce: introduce !== currentUser.introduce,
+                hasChanges: hasChanges
+            });
+        }
+
+        // 获取 CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // 切换昵称编辑模式
+        function toggleNicknameEdit() {
+            const nicknameInput = document.getElementById('nickname');
+            const editBtn = document.getElementById('edit-nickname-btn');
+            
+            if (nicknameInput.disabled) {
+                // 进入编辑模式
+                nicknameInput.disabled = false;
+                nicknameInput.focus();
+                nicknameInput.select();
+                
+                editBtn.textContent = '完成';
+                editBtn.style.backgroundColor = '#28a745';
+                
+                console.log('进入编辑模式');
+            } else {
+                // 保存并退出编辑模式
+                nicknameInput.disabled = true;
+                
+                editBtn.textContent = '编辑';
+                editBtn.style.backgroundColor = '#667eea';
+                
+                console.log('保存并退出编辑模式');
+                
+                // 调用保存函数
+                if (typeof saveProfile === 'function') {
+                    saveProfile();
+                } else {
+                    console.error('saveProfile 函数不存在');
+                    alert('保存失败，请刷新页面重试');
+                }
+            }
+        }
+        
+        // 监听回车键
+        document.addEventListener('DOMContentLoaded', function() {
+            const nicknameInput = document.getElementById('nickname');
+            nicknameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    toggleNicknameEdit();
+                }
+            });
+            
+            // 绑定申请成为创作者按钮
+            const applyCreatorBtn = document.getElementById('apply-creator-btn');
+            if (applyCreatorBtn) {
+                // 检查是否已经是创作者
+                const isCreator = '{{ user.is_creator|default:"0" }}' === '1' || '{{ user.is_creator|default:"0" }}' === 'True' || '{{ user.is_creator|default:"0" }}' === 'true';
+                
+                if (!isCreator) {
+                    applyCreatorBtn.style.cursor = 'pointer';
+                    applyCreatorBtn.addEventListener('click', openCreatorModal);
+                } else {
+                    applyCreatorBtn.classList.add('creator-status');
+                    applyCreatorBtn.style.cursor = 'default';
+                }
+            }
+            
+            // 勾选框变化事件
+            const agreementCheckbox = document.getElementById('agreement-checkbox');
+            const confirmBtn = document.getElementById('confirm-btn');
+            if (agreementCheckbox && confirmBtn) {
+                agreementCheckbox.addEventListener('change', function() {
+                    confirmBtn.disabled = !this.checked;
+                });
+            }
+        });
+        
+        // 打开创作者协议模态框
+        function openCreatorModal() {
+            const modal = document.getElementById('creator-agreement-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                
+                // 点击背景关闭
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeCreatorModal();
+                    }
+                });
+            }
+        }
+        
+        // 关闭创作者协议模态框
+        function closeCreatorModal() {
+            const modal = document.getElementById('creator-agreement-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                
+                // 重置勾选框
+                const agreementCheckbox = document.getElementById('agreement-checkbox');
+                if (agreementCheckbox) {
+                    agreementCheckbox.checked = false;
+                }
+                
+                // 重置确定按钮
+                const confirmBtn = document.getElementById('confirm-btn');
+                if (confirmBtn) {
+                    confirmBtn.disabled = true;
+                }
+            }
+        }
+        
+        // 提交创作者协议
+        function submitCreatorAgreement() {
+            const agreementCheckbox = document.getElementById('agreement-checkbox');
+            if (!agreementCheckbox.checked) {
+                alert('请先勾选协议');
+                return;
+            }
+            
+            console.log('提交创作者申请...');
+            
+            fetch('/apply_creator/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('响应数据:', data);
+                if (data.success) {
+                    alert('恭喜！已成为创作者，即将退出登录...');
+                    
+                    // 关闭模态框
+                    closeCreatorModal();
+                    
+                    // 退出登录
+                    logout();
+                } else {
+                    alert('申请失败：' + (data.message || '未知错误'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('网络错误');
+            });
+        }
+        
+        // 退出登录函数
+        function logout() {
+            fetch('/logout_user/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('已退出登录');
+                    window.location.href = '/';
+                } else {
+                    console.error('退出登录失败');
+                    window.location.href = '/';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.location.href = '/';
+            });
+        }
+    </script>
+    <script src="{% static 'js/user.js' %}"></script>
+</body>
+</html>

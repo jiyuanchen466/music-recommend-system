@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>炫音娱乐--智能语音交互音乐系统</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/nav_page.css' %}">
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="icon" href="{% static 'imgs/logo.png' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconfont1/iconfont.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconfont2/iconfont.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconfont3/iconfont.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconfont4/iconfont.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconfont5/iconfont.css' %}">
+</head>
+<body>
+    <div class="header">
+        <div class="left" href="#">
+            <img src="{% static 'imgs/brand.png' %}" alt="logo" class="logo">
+            <div class="brand-name">
+                <p class="cn"><span>炫</span><span>音</span><span>娱</span><span>乐</span></p>
+                <p class="en">SONYXIAN</p>
+            </div>
+        </div>
+        <div class="right">
+            <div class="btn-login" onclick="location.href='{% url 'login' %}'">用户登录</div>
+            <div class="btn-down"  id="toggleAdminBtn">
+                <i class="iconfont icon-xiangxia"></i>
+            </div>
+            <div class="btn-admin" id="adminLoginBtn">管理员登录</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="content1">
+            <h1>欢迎来到炫音娱乐</h1>
+            <p>本系统致力于帮助用户实现音乐推荐，并基于用户反馈进行歌曲推荐。</p>
+            <button class="btn-start" onclick="location.href='{% url 'login' %}'">开始体验</button><button class="btn-more" onclick="location.href='{% url 'login' %}'">了解更多 <i class="iconfont icon-youjiantou"></i></button>
+        </div>
+        <div class="content2">
+            <div class="music-bg"></div>
+            <div class="content2-left">
+                <h1 class="content2-left-title"><a>关</a><a>于</a><a>系</a><a>统</a></h1>
+                <div class="content2-left-text">本系统是一个基于Django框架设计与实现的音乐推荐系统，主要用于为用户提供更加便捷和个性化的音乐推荐服务。系统采用B/S架构，前端负责用户交互与数据输入，后端负责业务处理与推荐逻辑实现。在推荐功能上，系统结合用户历史听歌行为，采用协同过滤和基于内容的推荐方法，为用户推荐符合其兴趣偏好的音乐。同时，系统支持语音输入和图片上传等多种交互方式，用户可以通过语音描述需求或上传图片获取相应的音乐推荐结果。在数据方面，系统通过采集主流音乐平台的歌曲信息和用户行为数据，并利用Hadoop对数据进行离线处理与分析，以提高系统在大规模数据环境下的运行效率。整体系统结构清晰，功能完整，具有一定的实用价值。</div>
+            </div>
+            <button class="content2-right" onclick="location.href='{% url 'login' %}'">即刻心动</button>
+        </div>
+        <div class="content3">
+            <h1 class="content3-title">动感天地</h1>
+        </div> 
+    </div>
+    <div class="footer">
+        <div class="footer-logo">
+            <img href="#" src="{% static 'imgs/brand.png' %}" alt="logo"></img>
+        </div>
+        <div class="footer-text">
+            <a href="#">Copyright © 2026 SONYXIAN. All Rights Reserved.</a> |
+            <a href="emailto:<jizhichen14@gmail.com>">联系我们</a> |
+            <a href="#">关于我们</a> |
+            <a href="#">隐私政策</a> |
+            <a href="#">使用条款</a> |
+            <a href="#">帮助中心</a>
+        </div>
+    </div>
+    <audio id="clickAudio" src="{% static 'audios/audio1.mp3' %}"></audio>
+    <script src="{% static 'js/nav_page.js' %}"></script>
+</body>
+</html>

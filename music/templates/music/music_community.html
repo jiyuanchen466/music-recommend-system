@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>音乐社区 - 炫音娱乐</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="icon" href="{% static 'imgs/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont17/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'css/music_community.css' %}">
+</head>
+<body>
+    <!-- 录音界面 -->
+    <div class="recording-overlay" id="recordingOverlay">
+        <div class="recording-box">
+            <div class="recording-title">🎤 正在录音...</div>
+            <div class="recording-wave" id="recordingWave">
+                <!-- 动态生成波浪条 -->
+            </div>
+            <div class="recording-controls">
+                <button class="record-btn stop" id="stopRecordBtn">停止录制</button>
+                <button class="record-btn finish" id="finishRecordBtn">完成录制</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面容器 -->
+    <div class="community-container">
+        <!-- 内容编辑区 -->
+        <div class="editor-section">
+            <!-- 功能区 - 图标工具栏 -->
+            <div class="toolbar-section">
+                <div class="toolbar-icons">
+                    <span class="iconfont icon-shezhi-zitifangda" title="字体放大" data-action="fontSizeUp">
+                        <span class="font-size-hint" id="fontSizeUpHint">14</span>
+                    </span>
+                    <span class="iconfont icon-shezhi-zitisuoxiao" title="字体缩小" data-action="fontSizeDown">
+                        <span class="font-size-hint" id="fontSizeDownHint">14</span>
+                    </span>
+                    <span class="iconfont icon-T-yanse" title="字体颜色" data-action="textColor">
+                        <span class="font-size-hint" id="textColorHint">#333</span>
+                    </span>
+                    <span class="iconfont icon-tupian" title="插入图片" data-action="insertImage"></span>
+                    <span class="iconfont icon-yinpin" title="插入音频" data-action="insertAudio"></span>
+                    <span class="iconfont icon-luyin" title="录音" data-action="record"></span>
+                    <span class="iconfont icon-weizhi" title="位置" data-action="location"></span>
+                </div>
+                
+                <!-- 字体颜色选择器 -->
+                <div class="color-picker" id="colorPicker">
+                    <span class="color-option" style="background-color: #ff4d4f;" data-color="#ff4d4f"></span>
+                    <span class="color-option" style="background-color: #fa8c16;" data-color="#fa8c16"></span>
+                    <span class="color-option" style="background-color: #fadb14;" data-color="#fadb14"></span>
+                    <span class="color-option" style="background-color: #52c41a;" data-color="#52c41a"></span>
+                    <span class="color-option" style="background-color: #13c2c2;" data-color="#13c2c2"></span>
+                    <span class="color-option" style="background-color: #1890ff;" data-color="#1890ff"></span>
+                    <span class="color-option" style="background-color: #722ed1;" data-color="#722ed1"></span>
+                </div>
+            </div>
+            
+            <!-- 输入区 - 使用可编辑 div 支持富文本 -->
+            <div class="input-area">
+                <div id="contentEditor" contenteditable="true" placeholder="分享你的音乐故事、乐评或心情..."></div>
+                <div class="char-count">
+                    <span id="charCount">0</span>/3000
+                </div>
+            </div>
+            
+            <!-- 文件预览区 -->
+            <div class="file-preview-area" id="filePreviewArea" style="display: none;">
+                <div class="preview-content" id="previewContent"></div>
+            </div>
+            
+            <!-- 音乐选择弹出框 -->
+            <div class="music-selection-modal" id="musicSelectionModal" style="display: none;">
+                <div class="modal-overlay" id="modalOverlay"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>选择音乐</h3>
+                        <button class="modal-close" id="modalCloseBtn">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="music-list" id="musicList">
+                            <div class="loading-spinner">加载中...</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn cancel-btn" id="cancelSelectionBtn">取消</button>
+                        <button class="modal-btn confirm-btn" id="confirmSelectionBtn">确认</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 发布按钮区 -->
+            <div class="publish-section">
+                <div class="location-info" id="locationInfo"></div>
+                <button class="publish-btn" id="publishBtn">发布</button>
+            </div>
+        </div>
+        
+        <!-- 社区内容显示区 -->
+        <div class="feed-section">
+            <!-- 排序选项 -->
+            <div class="sort-options">
+                <button class="sort-btn active" data-sort="latest">最新</button>
+                <button class="sort-btn" data-sort="hottest">最热</button>
+            </div>
+            
+            <!-- 内容列表 -->
+            <div class="feed-list" id="feedList">
+                <div class="loading-spinner">加载中...</div>
+            </div>
+            
+            <!-- 分页 -->
+            <div class="pagination" id="pagination">
+                <button class="page-btn prev-btn" id="prevBtn">上一页</button>
+                <div class="page-info" id="pageInfo">第 1 页</div>
+                <button class="page-btn next-btn" id="nextBtn">下一页</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/music_community.js' %}"></script>
+</body>
+</html>

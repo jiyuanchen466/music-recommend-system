@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>炫音娱乐--智能语音交互音乐系统</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="stylesheet" href="{% static 'css/music_recommendation.css' %}">
+    <link rel="icon" href="{% static 'imgs/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont15/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont16/iconfont.css' %}">
+</head>
+<body>
+    <div class="audio-image-page">
+        <div class="action-row" id="action-row">
+            <div class="icon-item" id="audio-wave-item" title="长按音波，点击选择音频">
+                <div id="icon-wave-effect" class="icon-wave-effect hidden"></div>
+                <i class="iconfont icon-a-yinbobowenyuyin main-icon"></i>
+                <div id="recording-icons" class="recording-icons hidden"></div>
+            </div>
+            <div class="slash">或</div>
+            <div class="icon-item" id="upload-image-item" title="点击上传图片">
+                <i class="iconfont icon-shangchuantuxiang"></i>
+            </div>
+        </div>
+
+        <input type="file" id="audio-input" accept="audio/*" class="hidden-input">
+        <input type="file" id="image-input" accept="image/*" class="hidden-input">
+
+        <div id="audio-player-container" class="media-panel hidden">
+            <div class="media-controls">
+                <button id="audio-play-toggle" class="play-button" aria-label="播放/暂停">
+                    <i class="iconfont icon-bofang"></i>
+                </button>
+                <span id="audio-time">00:00 / 00:00</span>
+            </div>
+            <div id="audio-wave-bars" class="wave-bars" aria-label="音频波动"></div>
+            <audio id="preview-audio" controls class="hidden"></audio>
+        </div>
+
+        <div id="image-preview" class="image-preview hidden" aria-label="图片预览"></div>
+        
+        <!-- 录音盒子 -->
+        <div id="recording-box" class="recording-box hidden">
+            <div class="recording-wave-container">
+                <div id="recording-wave-bars" class="recording-wave-bars"></div>
+            </div>
+            <div class="recording-buttons">
+                <button id="start-recording-btn" class="start-recording-btn">开始录音</button>
+                <button id="stop-recording-btn" class="stop-recording-btn hidden">录制完成</button>
+            </div>
+        </div>
+        
+        <button id="analyze-btn" class="analyze-btn hidden" aria-label="开始分析">开始分析</button>
+    </div>
+    
+    <!-- 推荐结果容器 -->
+    <div id="recommendation-results" class="recommendation-results hidden">
+        <h2>推荐结果</h2>
+        <div id="music-grid" class="music-grid"></div>
+        
+        <!-- 分页控制 -->
+        <div class="pagination-container hidden">
+            <button id="prev-page" class="page-btn">上一页</button>
+            <span id="page-info" class="page-info">第 1 页</span>
+            <button id="next-page" class="page-btn">下一页</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="{% static 'js/music_recommendation.js' %}"></script>
+</body>
+</html>

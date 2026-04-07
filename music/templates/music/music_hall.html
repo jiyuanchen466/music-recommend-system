@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>炫音娱乐--智能语音交互音乐系统</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="icon" href="{% static 'imgs/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont9/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont10/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont11/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont12/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont13/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'css/music_hall.css' %}"></link>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: static;
+        }
+        
+        .header {
+            position: static;
+            width: 100%;
+        }
+        
+        .main-one {
+            min-height: calc(100vh - 80px);
+            padding-bottom: 20px;
+            width: 100%;
+        }
+        
+        /* 清除浮动 */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        /* 确保所有主要内容区域都使用清除浮动 */
+        .main-content-two,
+        .main-content-three,
+        .main-two {
+            overflow: visible;
+            clear: both;
+        }
+        
+        /* ★★★彻底解决显示不全问题 - 移除所有固定高度 ★★★ */
+        
+        /* 主容器都使用height: auto */
+        .main-content-two,
+        .main-content-three,
+        .main-two,
+        .main-three {
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+        }
+        
+        /* 所有列表和内容区域自动高度 */
+        .recommend-list,
+        .hot-recommend-list,
+        .rank-right,
+        .rank-table-content,
+        .comment-box,
+        .show-comment-content,
+        .search-result,
+        .search-result-table-content {
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+        }
+    </style>
+    <script>
+            window.initialMusicData = {
+            '中国': {{ music_data.chinese|safe }},
+            '欧美': {{ music_data.欧美|safe }},
+            '日本': {{ music_data.日本|safe }},
+            '韩国': {{ music_data.韩国|safe }}
+        };
+        // 新增：初始化飙升榜数据（从后端接收）
+        window.initialSoaringData = {{ initial_soaring_data|safe }};
+        
+        // 新增：传递所有榜单数据到前端
+        window.initialAllRankData = {{ all_rank_data|safe }};
+        
+        // 新增：传递当前日期
+        window.currentDate = '{{ current_date }}';
+    </script>
+    <script>
+        // ================================================================
+        // 🎵 个性化推荐加载
+        // ================================================================
+        function loadPersonalizedRecommendations() {
+            console.log('\n[推荐加载] 开始加载个性化推荐');
+            
+            // 从API获取个性化推荐
+            fetch('/api/recommendations/?count=8')
+                .then(response => {
+                    console.log('[推荐加载] 响应状态:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('[推荐加载] 收到数据:', data);
+                    
+                    if (data.code === 200 && data.data && Array.isArray(data.data)) {
+                        console.log(`[推荐加载] ${data.recommendation_type} - 获得 ${data.data.length} 条推荐`);
+                        renderRecommendations(data.data, data.recommendation_type);
+                    } else {
+                        console.warn('[推荐加载] 推荐数据为空或格式错误');
+                        showRecommendationError('无可用推荐');
+                    }
+                })
+                .catch(error => {
+                    console.error('[推荐加载] 错误:', error);
+                    showRecommendationError('加载失败: ' + error.message);
+                });
+        }
+        
+        function renderRecommendations(recommendations, type) {
+            console.log(`[推荐渲染] 渲染 ${type} 推荐，共 ${recommendations.length} 条`);
+            
+            const ul = document.getElementById('recommend-list-ul');
+            if (!ul) {
+                console.error('[推荐渲染] 找不到推荐列表容器');
+                return;
+            }
+            
+            let html = '';
+            recommendations.forEach((music, idx) => {
+                const musicId = music.music_id || music.id || '';
+                const musicName = music.music_name || music.name || '未知歌曲';
+                const author = music.author || '未知歌手';
+                const albumCover = music.album_cover || '/static/imgs/default_album_cover.jpg';
+                const clickCount = music.click_count || 0;
+                const reason = music.reason || '为你推荐';
+                
+                console.log(`  ${idx + 1}. ${musicName} - ${author} (${reason})`);
+                
+                html += `
+                    <li title="${reason}">
+                        <div class="img-box-above">
+                            <img src="${albumCover}" loading="lazy" alt="${musicName}" id="${musicId}" onerror="this.src='/static/imgs/default_album_cover.jpg'">
+                            <div class="music-menu">
+                                <i class="iconfont icon-erji"></i>
+                                <a class="click_num">${clickCount}</a>
+                                <i class="iconfont icon-bofang play-btn" data-music-id="${musicId}"></i>
+                            </div>
+                        </div>
+                        <div class="bottom-text" id="${musicId}">${musicName}</div>
+                    </li>
+                `;
+            });
+            
+            ul.innerHTML = html;
+            console.log('[推荐渲染] 渲染完成');
+            
+            // 绑定播放事件
+            bindRecommendationPlayEvents();
+        }
+        
+        function bindRecommendationPlayEvents() {
+            console.log('[事件绑定] 绑定推荐列表的播放事件');
+            
+            const playButtons = document.querySelectorAll('#recommend-list-ul .play-btn');
+            console.log(`[事件绑定] 找到 ${playButtons.length} 个播放按钮`);
+            
+            playButtons.forEach((btn, idx) => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const musicId = this.getAttribute('data-music-id');
+                    console.log(`[事件绑定] 点击播放按钮 ${idx + 1}，音乐ID: ${musicId}`);
+                    
+                    // 发送到父窗口播放
+                    if (window.parent !== window) {
+                        window.parent.postMessage({
+                            type: 'play_music_url',
+                            music_id: musicId
+                        }, '*');
+                    }
+                });
+            });
+        }
+        
+        function showRecommendationError(msg) {
+            console.error('[推荐错误] ' + msg);
+            
+            const ul = document.getElementById('recommend-list-ul');
+            if (ul) {
+                ul.innerHTML = `
+                    <li style="text-align: center; padding: 40px 0; color: #999;">
+                        <i class="iconfont icon-tishi"></i> ${msg}
+                    </li>
+                `;
+            }
+        }
+        
+        // ================================================================
+        // 初始化：页面加载时自动加载个性化推荐
+        // ================================================================
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('[初始化] 页面DOMContentLoaded，加载推荐');
+                setTimeout(loadPersonalizedRecommendations, 500);
+            });
+        } else {
+            console.log('[初始化] 页面已加载，直接加载推荐');
+            loadPersonalizedRecommendations();
+        }
+
+        window.globalPlaylist = [];
+        console.log('[初始化] globalPlaylist:', window.globalPlaylist);
+        
+        // 提前定义更新函数
+        function updatePlaylistDisplay() {
+            console.log('[updatePlaylistDisplay] 开始执行');
+            const container = document.getElementById('playlist-container');
+            console.log('[updatePlaylistDisplay] 找到容器:', container);
+            
+            if (!container) {
+                console.error('[updatePlaylistDisplay] 找不到 #playlist-container');
+                return;
+            }
+            
+            console.log('[updatePlaylistDisplay] globalPlaylist 内容:', window.globalPlaylist);
+            
+            if (window.globalPlaylist.length === 0) {
+                container.innerHTML = '<p style="color: #999; padding: 10px;">播放列表为空</p>';
+                console.log('[updatePlaylistDisplay] 播放列表为空');
+                return;
+            }
+            
+            let html = '<div style="padding: 10px; color: #fff;">';
+            html += '<h4 style="color: #ccff00; margin: 0 0 10px 0;">▶ 播放列表 (' + window.globalPlaylist.length + '首歌)</h4>';
+            html += '<ul style="list-style: none; padding: 0; margin: 0;">';
+            
+            window.globalPlaylist.forEach((music, idx) => {
+                const musicName = music.music_name || '未知歌曲';
+                const author = music.author || '未知歌手';
+                console.log(`[updatePlaylistDisplay] 添加歌曲 ${idx + 1}: ${musicName} - ${author}`);
+                html += `<li style="padding: 8px; border-bottom: 1px solid #333; color: #ccc; font-size: 12px;">${idx + 1}. ${musicName} - ${author}</li>`;
+            });
+            
+            html += '</ul>';
+            html += '<button onclick="window.globalPlaylist = []; updatePlaylistDisplay();" style="width: 100%; padding: 8px; margin-top: 10px; background: #333; color: #ccff00; border: 1px solid #ccff00; cursor: pointer; border-radius: 4px;">清空播放列表</button>';
+            html += '</div>';
+            
+            container.innerHTML = html;
+            console.log('[updatePlaylistDisplay] 更新完成');
+        }
+        
+        // ★删除本地播放列表功能 - 改为发送到父窗口的全局列表
+        window.addMusicToPlaylist = function(musicData) {
+            console.log('[addMusicToPlaylist] 添加歌曲到全局列表:', musicData);
+            
+            // 发送到父窗口（index.html 的全局播放列表）
+            if (window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'add_to_playlist_batch',
+                    music: [{
+                        music_id: musicData.music_id,
+                        name: musicData.music_name,
+                        author: musicData.author,
+                        cover: musicData.album_cover,
+                        url: ''
+                    }]
+                }, '*');
+                console.log('[addMusicToPlaylist] 已发送到父窗口');
+            }
+        };
+        
+        // ★删除播放列表显示功能
+        window.initPlaylistDisplay = function() {
+            // 已移除本地播放列表显示
+            console.log('[initPlaylistDisplay] 播放列表功能已删除');
+        };
+        
+        // ================================================================
+        // 🎵 搜索模块 - 直接嵌入 HTML
+        // ================================================================
+        
+        class MusicSearchModule {
+            constructor() {
+                this.searchBtn = null;
+                this.searchInput = null;
+                this.resultContainer = null;
+                this.paginationElement = null;
+                this.prevPageBtn = null;
+                this.nextPageBtn = null;
+                this.pageInfo = null;
+                this.searchResults = [];
+                this.currentPage = 1;
+                this.pageSize = 10;
+                this.isSearching = false;  // ★新增：搜索加载状态
+                this.loadingIndicator = null;  // ★新增：加载指示器 DOM
+            }
+
+            init() {
+                // 获取 DOM 元素
+                this.searchBtn = document.getElementById('search-btn');
+                this.searchInput = document.getElementById('search-input');
+                this.resultContainer = document.querySelector('.search-result-table-content');
+                this.paginationElement = document.getElementById('search-pagination');
+                this.prevPageBtn = document.getElementById('search-prev-page');
+                this.nextPageBtn = document.getElementById('search-next-page');
+                this.pageInfo = document.getElementById('search-page-info');
+
+                if (!this.searchBtn || !this.searchInput || !this.resultContainer) {
+                    console.error('[搜索] 初始化失败：DOM 元素缺失！');
+                    return false;
+                }
+
+                // ★新增：创建加载指示器
+                this.createLoadingIndicator();
+
+                // 绑定事件
+                this.bindEvents();
+
+                // 初始文案
+                this.showEmptyMessage();
+
+                return true;
+            }
+
+            // ★新增：创建加载指示器 DOM
+            createLoadingIndicator() {
+                this.loadingIndicator = document.createElement('div');
+                this.loadingIndicator.id = 'search-loading-indicator';
+                this.loadingIndicator.style.cssText = `
+                    display: none;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 0, 0, 0.85);
+                    color: white;
+                    padding: 40px 60px;
+                    border-radius: 12px;
+                    font-size: 16px;
+                    z-index: 10000;
+                    text-align: center;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+                `;
+                this.loadingIndicator.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            margin: 0 auto;
+                            border: 4px solid rgba(255, 255, 255, 0.3);
+                            border-top-color: white;
+                            border-radius: 50%;
+                            animation: searchSpin 1s linear infinite;
+                        "></div>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 500;">正在搜索...</div>
+                `;
+                document.body.appendChild(this.loadingIndicator);
+
+                // 添加旋转动画（如果还没有的话）
+                if (!document.querySelector('style[data-search-animation]')) {
+                    const style = document.createElement('style');
+                    style.setAttribute('data-search-animation', '');
+                    style.textContent = `
+                        @keyframes searchSpin {
+                            from { transform: rotate(0deg); }
+                            to { transform: rotate(360deg); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+
+            // 显示搜索加载指示器
+            showSearchLoading() {
+                if (this.loadingIndicator) {
+                    this.loadingIndicator.style.display = 'flex';
+                    this.loadingIndicator.style.visibility = 'visible';
+                    this.loadingIndicator.style.opacity = '1';
+                    this.isSearching = true;
+                    console.log('[搜索] 加载指示器显示');
+                } else {
+                    console.warn('[搜索] loadingIndicator 为 null');
+                }
+            }
+
+            // 隐藏搜索加载指示器
+            hideSearchLoading() {
+                if (this.loadingIndicator) {
+                    this.loadingIndicator.style.display = 'none';
+                    this.isSearching = false;
+                    console.log('[搜索] 加载指示器隐藏');
+                }
+            }
+
+            bindEvents() {
+                // 搜索按钮
+                const self = this;
+                this.searchBtn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // ★新增：防止搜索中时重复点击
+                    if (self.isSearching) {
+                        console.warn('[搜索] 正在搜索中，请稍候...');
+                        return;
+                    }
+
+                    const keyword = self.searchInput.value.trim();
+
+                    if (!keyword) {
+                        alert('请输入搜索关键词');
+                        return;
+                    }
+
+                    self.currentPage = 1;
+                    self.performSearch(keyword);
+                };
+
+                // 回车键搜索
+                this.searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        
+                        // ★新增：防止搜索中时重复点击
+                        if (this.isSearching) {
+                            console.warn('[搜索] 正在搜索中，请稍候...');
+                            return;
+                        }
+
+                        const keyword = this.searchInput.value.trim();
+                        if (keyword) {
+                            this.currentPage = 1;
+                            this.performSearch(keyword);
+                        }
+                    }
+                });
+
+                // 分页按钮
+                if (this.prevPageBtn) {
+                    this.prevPageBtn.addEventListener('click', () => {
+                        if (this.currentPage > 1) {
+                            this.currentPage--;
+                            this.renderResults();
+                        }
+                    });
+                }
+
+                if (this.nextPageBtn) {
+                    this.nextPageBtn.addEventListener('click', () => {
+                        const maxPages = Math.ceil(this.searchResults.length / this.pageSize);
+                        if (this.currentPage < maxPages) {
+                            this.currentPage++;
+                            this.renderResults();
+                        }
+                    });
+                }
+            }
+
+            async performSearch(keyword) {
+                // 防止重复搜索
+                if (this.isSearching) {
+                    console.warn('[搜索] 正在搜索中，请稍候...');
+                    return;
+                }
+
+                try {
+                    // 显示加载指示器
+                    console.log('[搜索] 开始搜索:', keyword);
+                    this.showSearchLoading();
+
+                    const url = `/api/music_hall/search/?q=${encodeURIComponent(keyword)}`;
+                    console.log('[搜索] 请求 URL:', url);
+                    
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('[搜索] 返回数据:', data);
+
+                    if (data.code === 200 && data.data && Array.isArray(data.data.results)) {
+                        console.log('[搜索] 找到 ' + data.data.results.length + ' 条结果');
+                        this.searchResults = data.data.results;
+                        this.renderResults();
+                    } else {
+                        const msg = data.msg || '未找到相关歌曲';
+                        this.showMessage(msg);
+                    }
+                } catch (err) {
+                    console.error('[搜索] 错误:', err);
+                    this.showMessage('搜索出错：' + err.message);
+                } finally {
+                    // 隐藏加载指示器
+                    this.hideSearchLoading();
+                }
+            }
+
+            renderResults() {
+                console.log('[搜索] 渲染结果，总数:', this.searchResults.length);
+                
+                if (this.searchResults.length === 0) {
+                    this.showEmptyMessage();
+                    return;
+                }
+
+                const start = (this.currentPage - 1) * this.pageSize;
+                const end = Math.min(start + this.pageSize, this.searchResults.length);
+                const pageData = this.searchResults.slice(start, end);
+                
+                console.log('[搜索] 页码:', this.currentPage, '显示:', pageData.length, '条');
+
+                let html = '';
+                pageData.forEach((item, idx) => {
+                    const musicName = this.escapeHtml(item.music_name || '');
+                    const author = this.escapeHtml(item.author || '');
+                    const album = this.escapeHtml(item.album || '');
+                    const musicId = item.music_id;
+                    const rawMusicName = item.music_name || '';
+                    const rawAuthor = item.author || '';
+                    const rawAlbum = item.album || '';
+                    const albumCover = item.album_cover || '';
+                    
+                    // 将歌曲信息序列化便于传递
+                    const musicInfo = JSON.stringify({
+                        music_id: musicId,
+                        music_name: rawMusicName,
+                        author: rawAuthor,
+                        album: rawAlbum,
+                        album_cover: albumCover
+                    });
+
+                    html += `
+                        <div class="search-result-table-item" data-music-id="${musicId}">
+                            <ul>
+                                <li><a class="song-link" data-music-id="${musicId}">${musicName}</a></li>
+                                <li>${author}</li>
+                                <li>${album}</li>
+                                <li>
+                                    <a class="play-link" data-music-id="${musicId}" title="播放"><i class="iconfont icon-bofangsanjiaoxing"></i></a>
+                                    <a class="add-playlist-link" data-music-id="${musicId}" data-music-info='${musicInfo}' title="添加到播放列表"><i class="iconfont icon-tianjia-1"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    `;
+                });
+
+                this.resultContainer.innerHTML = html;
+                this.updatePagination();
+                this.bindResultEvents();
+            }
+
+            bindResultEvents() {
+                const playLinks = this.resultContainer.querySelectorAll('.play-link');
+                playLinks.forEach(link => {
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const musicId = link.getAttribute('data-music-id');
+                        this.playMusic(musicId);
+                    };
+                });
+
+                const songLinks = this.resultContainer.querySelectorAll('.song-link');
+                songLinks.forEach(link => {
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const musicId = link.getAttribute('data-music-id');
+                        this.playMusic(musicId);
+                    };
+                });
+
+                // 添加到播放列表按钮
+                const addPlaylistLinks = this.resultContainer.querySelectorAll('.add-playlist-link');
+                addPlaylistLinks.forEach(link => {
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const musicInfo = link.getAttribute('data-music-info');
+                        this.addToPlaylist(musicInfo);
+                    };
+                });
+            }
+
+            addToPlaylist(musicInfoJson) {
+                try {
+                    console.log('[addToPlaylist] 收到数据:', musicInfoJson);
+                    
+                    // 解析 JSON 数据
+                    const musicData = JSON.parse(musicInfoJson);
+                    console.log('[addToPlaylist] 解析后:', musicData);
+                    
+                    if (!musicData.music_id) {
+                        alert('❌ 错误：不是有效的歌曲');
+                        return;
+                    }
+                    
+                    // ✅ 直接添加到播放列表（不调用后端 API）
+                    window.addMusicToPlaylist(musicData);
+                    
+                    // 发送给父窗口（如果是 iframe）
+                    if (window.parent !== window) {
+                        console.log('[addToPlaylist] 发送给父窗口');
+                        window.parent.postMessage({
+                            type: 'add_music_to_playlist',
+                            music_id: musicData.music_id,
+                            music_name: musicData.music_name,
+                            author: musicData.author,
+                            album: musicData.album,
+                            album_cover: musicData.album_cover
+                        }, '*');
+                    }
+                    
+                    alert('✅ 已添加: ' + musicData.music_name);
+                } catch (error) {
+                    console.error('[addToPlaylist] 错误:', error);
+                    alert('❌ 添加失败: ' + error.message);
+                }
+            }
+
+            playMusic(musicId) {
+                if (typeof window.playMusic === 'function') {
+                    window.playMusic(musicId);
+                } else if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'play_music',
+                        music_id: musicId
+                    }, '*');
+                }
+            }
+
+            updatePagination() {
+                if (!this.paginationElement) return;
+
+                const totalPages = Math.ceil(this.searchResults.length / this.pageSize);
+
+                if (totalPages <= 1) {
+                    this.paginationElement.style.display = 'none';
+                    return;
+                }
+
+                this.paginationElement.style.display = 'flex';
+                if (this.pageInfo) {
+                    this.pageInfo.textContent = `第 ${this.currentPage} / ${totalPages} 页`;
+                }
+
+                if (this.prevPageBtn) {
+                    this.prevPageBtn.disabled = this.currentPage <= 1;
+                }
+                if (this.nextPageBtn) {
+                    this.nextPageBtn.disabled = this.currentPage >= totalPages;
+                }
+            }
+
+            showMessage(msg) {
+                this.resultContainer.innerHTML = `<div class="search-result-table-content-initial">${this.escapeHtml(msg)}</div>`;
+                if (this.paginationElement) {
+                    this.paginationElement.style.display = 'none';
+                }
+            }
+
+            showEmptyMessage() {
+                this.showMessage('请输入歌曲/歌手/专辑关键词搜索');
+            }
+
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // 页面加载时初始化搜索模块
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('[搜索] DOMContentLoaded 初始化');
+                const searchModule = new MusicSearchModule();
+                if (searchModule.init()) {
+                    console.log('[搜索] 初始化成功');
+                } else {
+                    console.error('[搜索] 初始化失败');
+                }
+            });
+        } else {
+            console.log('[搜索] 直接初始化（页面已加载）');
+            const searchModule = new MusicSearchModule();
+            if (searchModule.init()) {
+                console.log('[搜索] 初始化成功');
+            } else {
+                console.error('[搜索] 初始化失败');
+            }
+        }
+
+        // ================================================================
+        // 评论和播放列表功能
+        // ================================================================
+        
+        // 页面加载后添加事件监听
+        setTimeout(() => {
+            // 初始化播放列表显示
+            window.initPlaylistDisplay();
+            
+            // 评论按钮：滚动到评论区
+            const commentBtn = document.getElementById('comment');
+            if (commentBtn) {
+                commentBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const commentBox = document.getElementById('comment-box-one');
+                    if (commentBox) {
+                        commentBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+
+            // 播放全部按钮：从数据库加载该榜单全部数据并添加到播放列表
+            const playAllBtn = document.getElementById('play-all');
+            if (playAllBtn) {
+                playAllBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取当前活跃榜单ID
+                    const activeMenu = document.querySelector('.menu-left .menu-active');
+                    if (!activeMenu) {
+                        alert('请先选择一个排行榜');
+                        return;
+                    }
+
+                    const rankType = activeMenu.id;
+                    console.log('播放全部，榜单类型:', rankType);
+
+                    // 从后端获取该榜单的全部数据
+                    fetch(`/api/rank/${rankType}/`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.code === 200 && data.data && Array.isArray(data.data.results)) {
+                                const rankData = data.data.results;
+                                console.log(`获取到 ${rankData.length} 条数据`);
+
+                                if (rankData.length === 0) {
+                                    alert('该榜单暂无数据');
+                                    return;
+                                }
+
+                                // 批量添加到播放列表
+                                rankData.forEach((music, index) => {
+                                    if (window.parent !== window) {
+                                        window.parent.postMessage({
+                                            type: 'add_rank_music_to_playlist',
+                                            music_id: music.music_id,
+                                            music_name: music.music_name,
+                                            album_cover: music.album_cover || '',
+                                            rank_type: rankType,
+                                            index: index,
+                                            total: rankData.length
+                                        }, '*');
+                                    }
+                                });
+
+                                alert(`已添加 ${rankData.length} 首歌曲到播放列表`);
+
+                                // 播放第一首
+                                if (rankData[0] && window.parent !== window) {
+                                    setTimeout(() => {
+                                        window.parent.postMessage({
+                                            type: 'play_rank_music',
+                                            music_id: rankData[0].music_id,
+                                            rank_type: rankType
+                                        }, '*');
+                                    }, 500);
+                                }
+                            } else {
+                                alert('获取榜单数据失败');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('获取榜单数据出错:', err);
+                            alert('获取数据出错: ' + err.message);
+                        });
+                });
+            }
+            
+            // ★新增：计算并通知父 iframe 页面的真实高度
+            setTimeout(() => {
+                const totalHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+                console.log('★ music_hall 实际高度:', totalHeight);
+                window.parent.postMessage({
+                    type: 'resize',
+                    iframeId: 'iframe-music_hall',
+                    height: Math.max(totalHeight, 1500)
+                }, '*');
+            }, 2000);
+        }, 500);
+    </script>
+</head>
+<body>
+    <div class="header">
+        <ul>
+            <li><a>推荐</a></li>
+            <li><a>排行榜</a></li>
+            <li><a>搜索</a></li>
+        </ul>
+    </div>
+    <div class="main-one">
+        <div class="main-content-one">
+            <div class="arrow-left"><i class="iconfont icon-arrow-left"></i></div>
+            <div class="mid-img">
+                <img src="{% static 'imgs/slides/slide1.jpg' %}" class="img-active">
+                <img src="{% static 'imgs/slides/slide2.jpeg' %}" class="">
+                <img src="{% static 'imgs/slides/slide3.jpg' %}" class="">
+                <img src="{% static 'imgs/slides/slide4.jpeg' %}" class="">
+                <img src="{% static 'imgs/slides/slide5.jpg' %}" class="">
+                <img src="{% static 'imgs/slides/slide6.jpg' %}" class="">
+                <img src="{% static 'imgs/slides/slide7.jpg' %}" class="">
+                <img src="{% static 'imgs/slides/slide8.jpg' %}" class="">
+            </div>
+            <div class="dots">
+                <a href="#" class="dot dot-active"></a>
+                <a href="#" class="dot"></a>
+                <a href="#" class="dot"></a>
+                <a href="#" class="dot"></a>
+                <a href="#" class="dot"></a>
+                <a href="#" class="dot"></a>
+                <a href="#" class="dot"></a>
+                <a href="#" class="dot"></a>
+            </div>
+            <div class="arrow-right"><i class="iconfont icon-arrow-right"></i></div>
+        </div>
+        <div class="main-content-two">
+            <h2>精彩推荐</h2>
+            <div class="recommend-list">
+                <ul id="recommend-list-ul">
+                    <!-- ★改为动态加载个性化推荐 -->
+                    <li style="text-align: center; padding: 40px 0; color: #999;">
+                        <i class="iconfont icon-loading"></i> 加载推荐中...
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-content-three">
+            <h2>热门推荐</h2>
+            <div class="hot-nav">
+                <ul>
+                    <li class="active-nav" data-country="华语">华语</li>
+                    <li data-country="欧美">欧美</li>
+                    <li data-country="日语">日语</li>
+                    <li data-country="韩语">韩语</li>
+                </ul>
+            </div>
+            <div class="hot-recommend-list huayu" id="hot-recommend-list">
+                <ul>
+                    <!-- 数据将通过JavaScript动态加载 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="main-two">
+        <div class="menu-left">
+            <div class="menu-active" id="soaring">飙升榜</div>
+            <div class="" id="newsong">新歌榜</div>
+            <div class="" id="hotsong">热歌榜</div>
+            <div class="" id="chinese">国语榜</div>
+            <div class="" id="europe">欧美榜</div>
+            <div class="" id="korean">韩语榜</div>
+            <div class="" id="japanese">日语榜</div>
+        </div>
+        <div class="rank-right">
+            <div class="rank-title">飙升榜</div>
+            <div class="rank-time">更新时间：2024-06-01</div>
+            <div class="operation-box">
+                <div class="play-all" id="play-all" style="background-color: greenyellow;"><i class="iconfont icon-bofangquanbu"></i>播放全部</div>
+                <div class="comment" id="comment"><i class="iconfont icon-pinglun"></i>评论</div>
+            </div>
+            <div class="rank-table-header">
+                <ul>
+                    <li></li>
+                    <li>歌曲</li>
+                    <li>歌手</li>
+                    <li></li>
+                </ul> 
+            </div>
+            <!-- 关键修改：清空所有静态内容 -->
+            <div class="rank-table-content"></div>
+
+            <div class="comment-box" id="comment-box-one">
+                <!-- 原有评论标题+输入框保留 -->
+                <div class="comment-title">评论<span class="comment-number">共<a class="comment-count">0</a>条评论</span></div>
+                <textarea class="comment-input" placeholder="请输入评论内容" maxlength="200"></textarea>
+                <div class="comment-btn-box"><div class="comment-btn" id="comment-btn-one">评论</div></div>
+                <!-- 原有精彩评论标题保留，新增无数据提示 -->
+                <div class="show-comment-title">精彩评论</div>
+                <!-- 新增：无评论提示（默认隐藏） -->
+                <div class="no-comment" id="no-comment" style="text-align: center; padding: 20px; color: #999; display: none;">暂无评论</div>
+                <!-- 评论列表容器（动态渲染） -->
+                <div class="show-comment-content" id="show-comment-content"></div>
+                <!-- 重构分页区域：动态生成页码，支持省略号、禁用状态 -->
+                <div class="show-comment-page" id="show-comment-page">
+                    <div class="show-comment-page-prev turn-page" id="prev-page" style="cursor: pointer;">&lt; 上一页</div>
+                    <div class="page-num-wrap" id="page-num-wrap" style="display: inline-block; margin: 0 10px;"></div>
+                    <div class="show-comment-page-next turn-page" id="next-page" style="cursor: pointer;">下一页 &gt;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main-three">
+        <!-- 搜索输入框 -->
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="搜索歌曲、歌手、专辑" />
+            <img src="{% static 'imgs/sousuo.png' %}" alt="搜索" title="搜索" id="search-btn" />
+        </div>
+
+        <!-- 搜索结果区域 -->
+        <div class="search-result">
+            <!-- 表头 -->
+            <div class="search-result-table-header">
+                <ul>
+                    <li>歌曲</li>
+                    <li>歌手</li>
+                    <li>专辑</li>
+                    <li>操作</li>
+                </ul>
+            </div>
+
+            <!-- 搜索结果内容 -->
+            <div class="search-result-table-content">
+                <div class="search-result-table-content-initial">请输入歌曲/歌手/专辑关键词搜索</div>
+            </div>
+        </div>
+
+        <!-- 分页控件 -->
+        <div class="search-pagination" id="search-pagination" style="display: none;">
+            <button id="search-prev-page" class="pagination-btn">上一页</button>
+            <span id="search-page-info" class="page-info"></span>
+            <button id="search-next-page" class="pagination-btn">下一页</button>
+        </div>
+    </div>
+    </div>
+    <script src="{% static 'js/music_hall.js' %}"></script>
+</body>
+</html>

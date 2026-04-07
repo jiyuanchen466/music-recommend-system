@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>炫音娱乐--LOGIN</title>
+    {% load static %}
+    <link rel="icon" href="{% static 'imgs/logo.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont6/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont7/iconfont.css' %}">
+</head>
+<body>
+    <div class="verify-window">
+        <div class="verify-box">
+            <div class="verify-title">请在下图中依次点击:<a class="verify-content" id="verify-text"></a></div>
+            <div class="verify-mid">
+                <div class="verify-img" id="verify-img"></div>
+                <div class="verify-error"><i class="iconfont icon-cuowu"></i>验证失败，请重试！</div>
+                <div class="verify-success"><i class="iconfont icon-dui"></i>验证成功！</div>
+            </div>
+            <div class="verify-footer">
+                <div class="verify-footer-left"><i class="iconfont icon-error-1" id="verify-quit"></i><i class="iconfont icon-shuaxin" id="verify-again"></i></div>
+                <div class="verify-footer-right"><button class="verify-btn" disabled>确定</button></div>
+            </div>
+        </div>
+    </div>
+    <div class="container login-container">
+        <div class="left-img" id="commen-img">
+            <img src="{% static 'imgs/bg2.png' %}" alt="logo">
+        </div>
+        <div class="right-form">
+            <h2 class="title">登录</h2>
+            <form  method="post" class="login-form">
+                {% csrf_token %}
+                <label for="username" id="username-label"><i class="iconfont icon-zhanghao"></i></label>
+                <input type="text" name="username" id="username" placeholder="请输入账号或邮箱" maxlength="30" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')"></br></br>
+                <label for="password" id="password-label"><i class="iconfont icon-mima"></i></label>
+                <input type="password" name="password" id="password" placeholder="请输入密码" maxlength="25" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')"><i class="iconfont icon-biyanjing" id="yanjing"></i></br></br>
+                <div class="remember"><input type="checkbox" name="remember_me" id="remember_me"><label for="remember_me">记住我</label></div>
+                <div class="yanzheng"><i class="iconfont icon-dianjiyanzheng" id="dianjiyanzheng"></i>点击验证</div>
+                <button type="submit" class="login-btn" disabled>登录</button>
+                <div class="forget-password">忘记密码？</div>
+                <div class="register-link">没有账号？去<a class="register-btn" id="register-btn">注册</a></div>
+            </form>
+        </div>
+    </div>
+    <div class="container register-container">
+        <div class="left-form">
+            <h2 class="title">注册</h2>
+            <form  method="post" class="register-form">
+                {% csrf_token %}
+                <label for="username" id="username-label"><i class="iconfont icon-zhanghao"></i></label>
+                <input type="text" name="username" id="username1" placeholder="请输入账号" maxlength="30" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')"></br></br>
+                <label for="password" id="password-label"><i class="iconfont icon-mima"></i></label>
+                <div style="position: relative; display: inline-block;">
+                    <input type="password" name="password" id="password1" placeholder="请输入密码" maxlength="25" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')" style="padding-right: 30px;">
+                    <i class="iconfont icon-biyanjing" id="yanjing1" style="position: absolute; right: 18px; top: 25%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"></i>
+                </div><i class="iconfont icon-zhengqueshixin" id="dui1" style="display:none;"></i>
+                </br></br>
+                <label for="password" id="password-label"><i class="iconfont icon-mima"></i></label>
+                <div style="position: relative; display: inline-block;">
+                    <input type="password" name="password" id="password2" placeholder="请确认密码" maxlength="25" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')" style="padding-right: 30px;">
+                    <i class="iconfont icon-biyanjing" id="yanjing2" style="position: absolute; right: 18px; top: 25%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"></i>
+                </div><i class="iconfont icon-iconfonticonfontwarn" id="cuowu1" style="display:none;"></i>
+                </br></br>             
+                <label for="email" id="email-label"><i class="iconfont icon-youxiang"></i></label>
+                <input type="text" name="email_prefix" id="email" placeholder="请输入邮箱名" maxlength="15" style="width:150px;" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')"><select name="email_suffix" class="email-end"><option value="@qq.com">@qq.com</option><option value="@outlook.com">@outlook.com</option><option value="@163.com">@163.com</option><option value="@gmail.com">@gmail.com</option><option value="@126.com">@126.com</option><option value="@hotmail.com">@hotmail.com</option></select></br></br>
+                <label for="email-code" id="email-code-label"><i class="iconfont icon-yanzhengma"></i></label>
+                <input type="text" name="email_code" id="email_code" placeholder="请输入验证码" maxlength="6" style="width:150px;"><a class="email-code-btn" id="email-code-btn">获取验证码</a></br>
+                <button type="submit" class="register-btn" id="register-btn1">注册</button>
+                <div class="login-link">已有账号？去<a class="login-btn" id="login-btn">登录</a></div>
+            </form>
+        </div>
+        <div class="right-img" id="commen-img">
+            <img src="{% static 'imgs/bg2.png' %}" alt="logo">
+        </div>
+    </div>
+    <div class="container forget-container">
+        <button class="forget-back-btn"> < 返回</button>
+        <h2 class="title">找回密码</h2>
+        <div class="find-process">—————————<span class="process-step current-step">①填写账号</span>—————————<span class="process-step">②验证邮箱</span>—————————<span class="process-step">③修改密码</span>—————————</div>
+        <div class="find-step1 find-step">
+            <label for="username" id="find-username-label"><i class="iconfont icon-zhanghao"></i></label>
+            <input type="text" name="username" id="find-username" placeholder="请输入你要找回的账号" maxlength="30" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')"></br>
+            <button type="submit" class="find-btn find-step1-btn" disabled>下一步</button>
+        </div>
+        <div class="find-step2 find-step">
+            <div class="find-step-pair">
+                <label for="email" id="find-email-label"><i class="iconfont icon-youxiang"></i></label>
+                <input type="text" name="email" id="find-email" placeholder="请输入你的注册邮箱" maxlength="30" readonly style="background-color: #f5f5f5; cursor: not-allowed;">
+                <button class="find-email-btn" id="find-email-send-btn">发送验证码</button>
+            </div>
+            <div class="find-step-pair">
+                <label for="email-code" id="find-email-code-label"><i class="iconfont icon-yanzhengma"></i></label>
+                <input type="text" name="email_code" id="find-email-code" placeholder="请输入验证码" maxlength="6">
+            </div>
+            <button type="submit" class="find-btn find-step2-btn" disabled>下一步</button>
+        </div>
+        <div class="find-step3 find-step">
+            <label for="password" id="find-password-label"><i class="iconfont icon-mima"></i></label>
+            <input type="password" name="password" id="find-password" placeholder="请输入新密码" maxlength="25" oninput="this.value=this.value.replace(/[^\x00-\xff]/g,'')"><i class="iconfont icon-biyanjing" id="yanjing3"></i></br>
+            <button type="submit" class="find-btn find-step3-btn" disabled>完成</button>
+        </div>
+        <div class="find-step4 find-step">
+            <a class="find-password-time">5</a> 秒后自动跳转到登录页面</a>
+        </div>
+    </div>
+    <div class="message message-success success-bg"><i class="iconfont icon-dui"></i><a class="success-text"></a></div>
+    <div class="message message-error error-bg"><i class="iconfont icon-cuowu"></i><a class="error-text"></a></div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>

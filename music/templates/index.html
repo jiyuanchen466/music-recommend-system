@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>炫音娱乐--智能语音交互音乐系统</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/commen.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="icon" href="{% static 'imgs/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont14/iconfont.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/iconfont8/iconfont.css' %}">
+</head>
+<body>
+    <!-- ★ 统一的 header，第三个标签页根据用户身份动态切换 -->
+    <div class="header" id="main-header">
+        <div class="left" onclick="window.location.href='{% url 'index' %}'">
+            <img src="{% static 'imgs/brand.png' %}" alt="logo" class="logo">
+            <div class="brand-name">
+                <p class="cn"><span>炫</span><span>音</span><span>娱</span><span>乐</span></p>
+                <p class="en">SONYXIAN</p>
+            </div>
+        </div>
+        <div class="middle">
+            <ul>
+                <li class="visited_li" data-key="music_hall" data-url="{% url 'music_hall' %}">音乐馆</li>
+                <li data-key="music_recommendation" data-url="{% url 'music_recommendation' %}">乐曲智荐</li>
+                <!-- ★ 第三个标签页根据用户身份动态显示 -->
+                <li id="third-tab" data-key="music_community" data-url="{% url 'music_community' %}">用户社区</li>
+                <li data-key="my_music" data-url="{% url 'my_music' %}">我的音乐</li>
+            </ul>
+        </div>
+        <div class="right" id="header-right-container">
+            <!-- 将通过 JavaScript 动态判断登录状态 -->
+        </div>
+    </div>
+    <div class="container" id="iframe-container" style="position: relative; width: 100%; height: auto; min-height: 600px;">
+        <iframe id="iframe-music_hall" class="preload-iframe active-iframe" src="{% url 'music_hall' %}" width="100%" frameborder="0" scrolling="no" onload="setIframeHeight(this)" style="overflow: visible; height: auto; display: block;"></iframe>
+        <iframe id="iframe-music_recommendation" class="preload-iframe" src="{% url 'music_recommendation' %}" width="100%" frameborder="0" scrolling="no" onload="setIframeHeight(this)" style="overflow: visible; height: auto; display: none;"></iframe>
+        <iframe id="iframe-music_community" class="preload-iframe" src="{% url 'music_community' %}" width="100%" frameborder="0" scrolling="auto" style="overflow-y: auto; height: 1000px; display: none;"></iframe>
+        <iframe id="iframe-creator_centered" class="preload-iframe" src="/creator_centered/" width="100%" frameborder="0" scrolling="auto" onload="setIframeHeight(this)" style="overflow: visible; height: auto; display: none;"></iframe>
+        <iframe id="iframe-my_music" class="preload-iframe" src="{% url 'my_music' %}" width="100%" frameborder="0" scrolling="auto" onload="setIframeHeight(this)" style="overflow: visible; height: auto; display: none;"></iframe>
+    </div>
+    <div class="play-music-box-fixed" id="play-music-box-fixed">
+        <div class="play-music-box">
+            <span class="play-music-prev switch-music"><i class="iconfont icon-shangyishou"></i></span>
+            <span class="play-music-current"><i class="iconfont icon-bofangyinle"></i></span>
+            <span class="play-music-next switch-music"><i class="iconfont icon-xiayishou"></i></span>
+        </div>
+        <div class="play-music-info">
+            <img src="" class="music-img" id="">
+            <div class="music-name" id=""></div>
+            <div class="play-progress">
+                <div class="play-progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <span class="play-progress-time">
+                    <a class="play-progress-current">00:00</a> / <a class="play-progress-total">00:00</a>
+                </span>
+            </div>
+        </div>
+        <div class="play-music-controller">
+            <span class="play-music-like"><i class="iconfont icon-xiai" title="喜爱"></i></span>
+            <span class="play-music-cycle"><i class="iconfont icon-bofang-xunhuanbofang" title="列表循环"></i></span>
+            <span class="play-music-voice"><i class="iconfont icon-shengyin" title="音量"></i></span>
+            <div class="play-music-volume-box"><div class="play-music-volume-bar"></div></div>
+            <span class="play-music-list"><i class="iconfont icon-bofangliebiao" title="播放列表"></i></span>
+            <div class="play-music-list-box">
+                <div class="play-music-list-title">播放列表</div>
+                <div class="play-music-list-content">
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="footer">
+        <div class="left-footer">
+            <h3>特色服务</h3>
+            <ul>
+                <li><a href="#">AI免费写歌</a></li></br>
+                <li><a href="#">音乐推-歌曲推广</a></li></br>
+                <li><a href="#">炫音KTV</a></li></br>
+                <li><a href="#">音乐开放平台</a></li></br>
+                <li><a href="#">至尊音乐人</a></li>
+            </ul>
+        </div>
+        <div class="middle-footer">炫音娱乐</div>
+        <div class="right-footer">
+            <a class="weibo"><i class="iconfont8 icon-weibo"></i></a>
+            <a class="weixin"><i class="iconfont8 icon-weixin"></i></a>
+            <a class="qq"><i class="iconfont8 icon-QQ"></i></a>
+            <div class="weibo-qrcode-box">
+                <div class="weibo-qrcode-tri"></div>
+                <div class="weibo-qrcode"><img src="{% static 'imgs/weibo-qrcode.png' %}" alt="weibo-qrcode"></div>
+            </div>
+            <div class="weixin-qrcode-box">
+                <div class="weixin-qrcode-tri"></div>
+                <div class="weixin-qrcode"><img src="{% static 'imgs/weixin-qrcode.png' %}" alt="weixin-qrcode"></div>
+            </div>
+            <div class="qq-qrcode-box">
+                <div class="qq-qrcode-tri"></div>
+                <div class="qq-qrcode"><img src="{% static 'imgs/qq-qrcode.png' %}" alt="qq-qrcode"></div>
+            </div>
+        </div>
+        <div class="application-info"><a href="#">关于我们</a> | <a href="#">隐私条款</a> | <a href="#">使用协议</a> | <a href="#">版权声明</a> | <a href="#">意见反馈</a> | <a href="#">客服中心</a> | <a href="#">联系我们</a> | <a href="#">友情链接</a> | <a href="#">帮助中心</a></div>
+        <p class="copyright">Copyright © 2026 - SONYXIAN. All Rights Reserved.</p>
+        <div class="record-info">炫音娱乐 <a href="#">版权所有</a> | 违法与不良信息举报邮箱：<a href="#">caspar466@163.com</a></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script>
+        // ★ 强制 CSS 规则 - 在脚本最开始执行，使用更高优先级
+        (function() {
+            const style = document.createElement('style');
+            style.textContent = `
+                #main-header {
+                    display: flex !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
+            `;
+            document.head.insertBefore(style, document.head.firstChild);  // 插入到最前面
+            console.log('🔥 已注入强制 CSS 规则到头部');
+        })();
+    </script>
+    <script>
+        // ★ 全局变量和函数 - 在 jQuery 加载完之前定义，支持 iframe onload 调用
+        const iframeHeightObservers = new Map();
+        const iframeHeightCache = new Map();
+
+        function normalizeHeight(value) {
+            if (!value || isNaN(value)) return 600;
+            return Math.max(600, value);
+        }
+
+        function updateIframeHeight(iframe) {
+            if (!iframe || !iframe.contentWindow) return;
+
+            try {
+                // ★ music_community 固定高度 1000px，充足需目也可滑动
+                if (iframe.id === 'iframe-music_community') {
+                    iframe.style.height = '1000px';
+                    iframeHeightCache.set(iframe.id, 1000);
+                    return;
+                }
+
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!iframeDoc) return;
+
+                const body = iframeDoc.body;
+                const html = iframeDoc.documentElement;
+
+                const scrollHeight = Math.max(body.scrollHeight, html.scrollHeight);
+                const offsetHeight = Math.max(body.offsetHeight, html.offsetHeight);
+                const contentHeight = Math.max(scrollHeight, offsetHeight);
+
+                let targetHeight;
+                if (iframe.id === 'iframe-my_music') {
+                    targetHeight = Math.max(1200, contentHeight);
+                } else if (iframe.id === 'iframe-creator_centered') {
+                    targetHeight = Math.max(1200, contentHeight);
+                } else if (iframe.id === 'iframe-music_recommendation') {
+                    // music_recommendation: 最小 600px，最大 2000px
+                    targetHeight = Math.max(600, Math.min(contentHeight, 2000));
+                } else {
+                    targetHeight = normalizeHeight(contentHeight);
+                }
+
+                const cachedHeight = iframeHeightCache.get(iframe.id);
+                const diff = cachedHeight ? Math.abs(targetHeight - cachedHeight) : -1;
+
+                // 增大高度变化阈值为 100px，减少频繁更新
+                if (!cachedHeight || diff > 100) {
+                    console.log(`✓ 更新 ${iframe.id} 高度: ${cachedHeight || '未设置'} → ${targetHeight}px`);
+                    iframe.style.height = targetHeight + 'px';
+                    iframeHeightCache.set(iframe.id, targetHeight);
+                }
+            } catch (e) {
+                console.warn('⚠️ updateIframeHeight 受限（跨域或加载中）：', e);
+            }
+        }
+
+        function setIframeHeight(iframe) {
+            console.log('=== 开始设置 iframe 高度 ===', iframe.id);
+
+            updateIframeHeight(iframe);
+
+            // ★ 多次检查确保内容完全加载
+            setTimeout(() => updateIframeHeight(iframe), 200);
+            setTimeout(() => updateIframeHeight(iframe), 400);
+            setTimeout(() => updateIframeHeight(iframe), 600);
+            setTimeout(() => updateIframeHeight(iframe), 800);
+            setTimeout(() => updateIframeHeight(iframe), 1000);
+            setTimeout(() => updateIframeHeight(iframe), 1200);
+            setTimeout(() => updateIframeHeight(iframe), 1500);
+            setTimeout(() => updateIframeHeight(iframe), 2000);
+            
+            // ★ 为需要更长加载时间的页面添加更长的等待时间
+            if (iframe.id === 'iframe-music_hall' || iframe.id === 'iframe-my_music' || iframe.id === 'iframe-creator_centered') {
+                setTimeout(() => {
+                    console.log('★ ' + iframe.id + ' 补充高度检查...');
+                    updateIframeHeight(iframe);
+                }, 2500);
+                setTimeout(() => {
+                    console.log('★ ' + iframe.id + ' 最终高度检查...');
+                    updateIframeHeight(iframe);
+                }, 3500);
+                setTimeout(() => {
+                    console.log('★ ' + iframe.id + ' 极限高度检查...');
+                    updateIframeHeight(iframe);
+                }, 5000);
+            }
+            
+            // ★ my_music 页面的特殊处理 - 数据加载较慢
+            if (iframe.id === 'iframe-my_music') {
+                setTimeout(() => {
+                    console.log('★ ' + iframe.id + ' 加强高度检查1...');
+                    updateIframeHeight(iframe);
+                }, 6000);
+                setTimeout(() => {
+                    console.log('★ ' + iframe.id + ' 加强高度检查2...');
+                    updateIframeHeight(iframe);
+                }, 7500);
+                setTimeout(() => {
+                    console.log('★ ' + iframe.id + ' 加强高度检查3...');
+                    updateIframeHeight(iframe);
+                }, 9000);
+            }
+
+            // 监听 iframe 内部内容变化
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc && iframeDoc.body) {
+                    if (iframeHeightObservers.has(iframe.id)) {
+                        iframeHeightObservers.get(iframe.id).disconnect();
+                    }
+
+                    let debounceTimer = null;
+                    const observer = new MutationObserver(() => {
+                        // 增加防抖延迟到 300ms，减少频繁更新
+                        clearTimeout(debounceTimer);
+                        debounceTimer = setTimeout(() => updateIframeHeight(iframe), 300);
+                    });
+
+                    observer.observe(iframeDoc.body, {
+                        attributes: true,
+                        childList: true,
+                        subtree: true,
+                        characterData: true
+                    });
+
+                    iframeHeightObservers.set(iframe.id, observer);
+                }
+            } catch (e) {
+                console.warn('⚠️ setIframeHeight 监听受限（跨域）：', e);
+            }
+
+            // ★ 更频繁的定时器检查
+            const dynamicTimer = setInterval(() => {
+                if (!document.body.contains(iframe)) {
+                    clearInterval(dynamicTimer);
+                    return;
+                }
+                updateIframeHeight(iframe);
+            }, 500);  // 改为 500ms，减少检查频率
+
+            iframe.addEventListener('load', function() {
+                console.log('★ iframe load 事件，立即计算高度');
+                updateIframeHeight(iframe);
+                setTimeout(() => updateIframeHeight(iframe), 50);
+                setTimeout(() => updateIframeHeight(iframe), 200);
+                setTimeout(() => updateIframeHeight(iframe), 500);
+            });
+        }
+    </script>
+    <script>
+        // 页面加载时检查登录状态
+        let isCreator = false;  // ★ 全局记录用户是否是创作者
+        $(document).ready(function() {
+            console.log('=== 页面加载完成 ===');
+            
+            checkLoginStatusAndRender();
+            initMusicPlayer();
+            
+            // ★ 标签页切换时调整容器高度
+            setupTabHeightAdjustment();
+        });
+        
+        function setupTabHeightAdjustment() {
+            const container = document.getElementById('iframe-container');
+            if (!container) return;
+            
+            // ★ 初始化容器高度（默认显示 music_hall）
+            adjustContainerHeight('music_hall', container);
+            
+            // 获取所有标签页项
+            const allTabItems = document.querySelectorAll('.header .middle ul li');
+            
+            allTabItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const dataKey = this.getAttribute('data-key');
+                    const dataUrl = this.getAttribute('data-url');
+                    
+                    if (!dataKey) return;  // 如果没有 data-key 则忽略
+                    
+                    console.log('📌 标签页切换：', dataKey, 'URL:', dataUrl);
+                    
+                    // ★ 隐藏所有 iframe
+                    const allIframes = document.querySelectorAll('.preload-iframe');
+                    allIframes.forEach(iframe => {
+                        iframe.style.display = 'none';
+                    });
+                    
+                    // ★ 显示对应的 iframe
+                    let iframeToShow = null;
+                    if (dataKey === 'music_hall') {
+                        iframeToShow = document.getElementById('iframe-music_hall');
+                    } else if (dataKey === 'music_recommendation') {
+                        iframeToShow = document.getElementById('iframe-music_recommendation');
+                    } else if (dataKey === 'music_community') {
+                        iframeToShow = document.getElementById('iframe-music_community');
+                    } else if (dataKey === 'creator_centered') {
+                        iframeToShow = document.getElementById('iframe-creator_centered');
+                    } else if (dataKey === 'my_music') {
+                        iframeToShow = document.getElementById('iframe-my_music');
+                    }
+                    
+                    if (iframeToShow) {
+                        iframeToShow.style.display = 'block';
+                        console.log('✓ 显示 iframe:', iframeToShow.id);
+                    }
+                    
+                    // 标记当前活跃的标签
+                    document.querySelectorAll('.header .middle ul li').forEach(li => {
+                        li.classList.remove('visited_li');
+                    });
+                    this.classList.add('visited_li');
+                    
+                    // 等待 iframe 显示和内容加载，然后调整容器高度
+                    setTimeout(() => {
+                        adjustContainerHeight(dataKey, container);
+                    }, 100);
+                });
+            });
+        }
+        
+        function adjustContainerHeight(pageKey, container) {
+            console.log('调整容器高度，当前页面：', pageKey);
+            
+            if (pageKey === 'my_music') {
+                // my_music 时固定高度 1500px
+                container.style.height = '1500px';
+                console.log('设置 container 固定高度 1500px');
+            } else if (pageKey === 'creator_centered') {
+                // creator_centered 时自动高度，最小 2000px
+                container.style.height = 'auto';
+                container.style.minHeight = '2000px';
+                console.log('设置 container 自动高度，最小 2000px');
+            } else if (pageKey === 'music_community') {
+                // music_community 固定高度 1000px
+                container.style.height = '1000px';
+                console.log('设置 container 固定高度 1000px');
+            } else {
+                // 其他页面也使用自动高度
+                container.style.height = 'auto';
+                container.style.minHeight = '600px';
+                console.log('设置 container 自动高度，最小 600px');
+            }
+        }
+        
+        function checkLoginStatusAndRender() {
+            // 从 cookie 中获取用户信息
+            const userId = getCookie('user_id');
+            const username = getCookie('username');
+            const isLoggedIn = getCookie('is_logged_in');
+            
+            console.log('\n=== 检查登录状态 ===');
+            console.log('userId:', userId);
+            console.log('username:', username);
+            console.log('isLoggedIn:', isLoggedIn);
+            
+            const container = document.getElementById('header-right-container');
+            
+            if (!container) {
+                console.error('❌ 错误：找不到 header-right-container 元素');
+                return;
+            }
+            
+            // 如果已登录且有用户名
+            if (isLoggedIn === 'true' && userId && username) {
+                console.log('✅ 用户已登录，userId:', userId);
+                
+                // 先显示临时内容（使用默认头像占位）
+                container.innerHTML = `
+                    <div class="already-login" id="${userId}" style="display: block;">
+                        <img src="/static/imgs/hp1.png" alt="user" style="border-radius: 50%;" class="user-img temp-avatar" title="${username}" onclick="window.location.href='/user/${userId}'">
+                    </div>
+                `;
+                
+                // 调用后端 API 获取实时的用户头像、昵称和创作者状态
+                fetch(`/api/user/info/?user_id=${userId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('\n📦 从后端获取到用户信息:');
+                        console.log('完整响应:', JSON.stringify(data, null, 2));
+                        
+                        if (data.code === 200 && data.data) {
+                            const { avatar_url, is_creator } = data.data;
+                            console.log('✅ 头像 URL:', avatar_url);
+                            console.log('✅ is_creator 原始值:', is_creator);
+                            console.log('✅ is_creator 类型:', typeof is_creator);
+                            
+                            // 更新头像
+                            const avatar = container.querySelector('.temp-avatar');
+                            if (avatar && avatar_url) {
+                                avatar.src = avatar_url;
+                                avatar.onerror = function() {
+                                    console.warn('⚠️ 头像加载失败，使用默认头像');
+                                    this.src = '/static/imgs/hp1.png';
+                                };
+                            }
+                            
+                            // ★ 关键判断：检查用户是否是创作者
+                            const isCreatorFlag = is_creator && is_creator !== '0' && is_creator !== 0 && is_creator !== false;
+                            console.log('🔍 最终判定 isCreatorFlag:', isCreatorFlag);
+                            
+                            // ★ 根据创作者状态更新第三个标签页
+                            const thirdTab = document.getElementById('third-tab');
+                            if (thirdTab) {
+                                if (isCreatorFlag) {
+                                    console.log('👤 → 用户是创作者');
+                                    console.log('📝 第三个标签改为: creator_centered (创作者中心)');
+                                    thirdTab.setAttribute('data-key', 'creator_centered');
+                                    thirdTab.setAttribute('data-url', '/creator_centered/');
+                                    thirdTab.textContent = '创作者中心';
+                                    isCreator = true;
+                                } else {
+                                    console.log('🧑 → 用户是普通用户');
+                                    console.log('📝 第三个标签改为: music_community (用户社区)');
+                                    thirdTab.setAttribute('data-key', 'music_community');
+                                    thirdTab.setAttribute('data-url', '{% url "music_community" %}');
+                                    thirdTab.textContent = '用户社区';
+                                    isCreator = false;
+                                }
+                            }
+                        } else {
+                            console.warn('❌ 获取用户信息失败:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ 获取用户信息异常:', error);
+                    });
+                
+            } else {
+                console.log('🔓 未登录状态');
+                container.innerHTML = `
+                    <div class="no-login" onclick="window.location.href='/login/'">登录</div>
+                `;
+            }
+        }
+        
+        function logoutUser() {
+            console.log('🚪 执行退出登录');
+            
+            // 获取 CSRF token
+            const csrfToken = getCookie('csrftoken');
+            
+            fetch('/logout_user/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ 退出响应:', data);
+                if (data.success) {
+                    alert('已退出登录');
+                    window.location.reload();
+                } else {
+                    alert('退出失败：' + (data.message || '未知错误'));
+                }
+            })
+            .catch(error => {
+                console.error('❌ 退出错误:', error);
+                alert('网络错误');
+            });
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // ★新增★：更新音乐点击数
+        function updateMusicClickCount(musicId, rankType = 'newsong') {
+            if (!musicId) {
+                console.warn('⚠️ 音乐ID为空，无法更新点击数');
+                return;
+            }
+            
+            console.log(`📊 更新点击数：${musicId}，榜单类型：${rankType}`);
+            
+            fetch('/api/music/click-count/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    music_id: musicId,
+                    rank_type: rankType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('✓ 点击数已更新');
+                } else {
+                    console.warn('⚠️ 点击数更新失败:', data.msg);
+                }
+            })
+            .catch(error => {
+                console.warn('⚠️ 点击数更新请求失败:', error);
+            });
+        }
+        
+        // 【新增】记录音乐播放到用户喜爱数据库
+        function recordMusicPlayToUserDatabase(musicId, musicName = '') {
+            try {
+                // 获取用户ID
+                const userId = getCookie('user_id');
+                if (!userId) {
+                    console.warn('⚠️ 用户未登录，跳过数据库记录');
+                    return;
+                }
+
+                console.log('📝 正在记录播放到数据库...');
+                console.log('  - 音乐 ID:', musicId);
+                console.log('  - 音乐名:', musicName);
+                console.log('  - 用户 ID:', userId);
+
+                // 调用后端 toggle_like API 来记录喜爱
+                fetch('/music/toggle_like/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        music_id: musicId.toString()
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ 播放记录已保存到数据库');
+                        console.log('   返回数据:', data);
+                    } else {
+                        console.warn('⚠️ 记录失败:', data.msg || data.message || '未知错误');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ 记录播放出错:', error);
+                });
+            } catch (error) {
+                console.error('❌ recordMusicPlayToUserDatabase 异常:', error);
+            }
+        }
+        
+        // ★新增★：更新音乐喜爱数
+        function updateMusicLikeCount(musicId, rankType = 'newsong') {
+            if (!musicId) {
+                console.warn('⚠️ 音乐ID为空，无法更新喜爱数');
+                return;
+            }
+            
+            console.log(`💛 更新喜爱数：${musicId}，榜单类型：${rankType}`);
+            
+            fetch('/api/music/like-count/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    music_id: musicId,
+                    rank_type: rankType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('✓ 喜爱数已更新');
+                } else {
+                    console.warn('⚠️ 喜爱数更新失败:', data.msg);
+                }
+            })
+            .catch(error => {
+                console.warn('⚠️ 喜爱数更新请求失败:', error);
+            });
+        }
+        
+        // 监听 iframe 发来的消息（resize、scroll_to_comment、updateHeight、updateIframeHeight）
+        window.addEventListener('message', function(e) {
+            if (!e.data) return;
+
+            if (e.data.type === 'resize') {
+                const iframeId = e.data.iframeId || 'iframe-music_hall';
+                const iframe = document.getElementById(iframeId);
+
+                if (iframe && e.data.height) {
+                    let height;
+                    if (iframeId === 'iframe-music_community') {
+                        height = 1000;  // 固定 1000px
+                    } else if (iframeId === 'iframe-my_music') {
+                        height = Math.max(600, e.data.height);  // 最小600px，无上限
+                    } else if (iframeId === 'iframe-music_recommendation') {
+                        height = Math.max(600, Math.min(e.data.height, 2000));  // 最小600px，最大5000px
+                    } else {
+                        height = normalizeHeight(e.data.height);
+                    }
+                    iframe.style.height = height + 'px';
+                    console.log(`✓ resize message 设置 ${iframeId} 高度: ${height}px`);
+                }
+                return;
+            }
+
+            // ★ 处理通用的高度更新请求（从iframe内部发起）
+            if (e.data.type === 'updateIframeHeight') {
+                const height = e.data.height;
+                console.log('📏 收到 iframe 高度更新请求，新高度:', height);
+                
+                // 查找发送消息的 iframe
+                for (let iframeId of ['iframe-music_hall', 'iframe-music_recommendation', 'iframe-music_community', 'iframe-creator_centered', 'iframe-my_music']) {
+                    const iframe = document.getElementById(iframeId);
+                    if (iframe && iframe.contentWindow === e.source) {
+                        console.log('✓ 找到发送方 iframe:', iframeId);
+                        
+                        let targetHeight;
+                        if (iframeId === 'iframe-music_community') {
+                            targetHeight = 1000;  // 固定 1000px
+                        } else if (iframeId === 'iframe-my_music' || iframeId === 'iframe-creator_centered') {
+                            targetHeight = Math.max(600, height);
+                        } else if (iframeId === 'iframe-music_recommendation') {
+                            targetHeight = Math.max(600, Math.min(height, 2000));
+                        } else {
+                            targetHeight = normalizeHeight(height);
+                        }
+                        
+                        iframe.style.height = targetHeight + 'px';
+                        iframeHeightCache.set(iframeId, targetHeight);
+                        console.log(`✓ 设置 ${iframeId} 高度: ${targetHeight}px`);
+                        break;
+                    }
+                }
+                return;
+            }
+
+            // ★ 处理分页时的高度更新请求
+            if (e.data.type === 'updateHeight') {
+                // 新格式：含有page字段的updateHeight消息（来自music_community.js等）
+                if (e.data.page && e.data.height) {
+                    const pageToIframeMap = {
+                        'music_community': 'iframe-music_community',
+                        'creator_centered': 'iframe-creator_centered',
+                        'music_hall': 'iframe-music_hall',
+                        'music_recommendation': 'iframe-music_recommendation',
+                        'my_music': 'iframe-my_music'
+                    };
+                    const iframeId = pageToIframeMap[e.data.page];
+                    if (iframeId) {
+                        const iframe = document.getElementById(iframeId);
+                        if (iframe) {
+                            let targetHeight;
+                            if (iframeId === 'iframe-music_community') {
+                                targetHeight = 1000;  // 固定 1000px
+                            } else if (iframeId === 'iframe-my_music' || iframeId === 'iframe-creator_centered') {
+                                targetHeight = Math.max(1200, e.data.height);
+                            } else if (iframeId === 'iframe-music_recommendation') {
+                                targetHeight = Math.max(600, Math.min(e.data.height, 2000));
+                            } else {
+                                targetHeight = normalizeHeight(e.data.height);
+                            }
+                            iframe.style.height = targetHeight + 'px';
+                            iframeHeightCache.set(iframeId, targetHeight);
+                            console.log(`✓ postMessage设置 ${iframeId} 高度: ${targetHeight}px (来自${e.data.page})`);
+                        }
+                    }
+                    return;
+                }
+                
+                // 旧格式：含有iframeId字段的updateHeight消息（来自其他地方）
+                const iframeId = e.data.iframeId;
+                const iframe = document.getElementById(iframeId);
+                if (iframe) {
+                    // ★ music_community 跳过更新，保持固定高度
+                    if (iframeId === 'iframe-music_community') {
+                        console.log('🔒 music_community 跳过高度更新，保持固定 1000px');
+                        return;
+                    }
+                    // ★ music_recommendation 限制最大高度
+                    if (iframeId === 'iframe-music_recommendation') {
+                        console.log('📏 music_recommendation 高度更新请求，应用最大高度限制');
+                        iframeHeightCache.delete(iframeId);
+                        updateIframeHeight(iframe);
+                        setTimeout(() => updateIframeHeight(iframe), 50);
+                        setTimeout(() => updateIframeHeight(iframe), 100);
+                        setTimeout(() => updateIframeHeight(iframe), 200);
+                        setTimeout(() => updateIframeHeight(iframe), 400);
+                        return;
+                    }
+                    console.log('🔄 收到分页高度更新请求：', iframeId);
+                    // 清除缓存，强制重新计算
+                    iframeHeightCache.delete(iframeId);
+                    updateIframeHeight(iframe);
+                    // 多次检查确保高度准确
+                    setTimeout(() => updateIframeHeight(iframe), 50);
+                    setTimeout(() => updateIframeHeight(iframe), 100);
+                    setTimeout(() => updateIframeHeight(iframe), 200);
+                    setTimeout(() => updateIframeHeight(iframe), 400);
+                }
+                return;
+            }
+
+            if (e.data.type === 'scroll_to_comment') {
+                const iframe = document.getElementById('musicFrame');
+                if (!iframe) return;
+
+                const iframeRect = iframe.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const targetPosition = iframeRect.top + scrollTop + (e.data.position || 0) - 100;
+
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+        // 音乐播放器初始化
+        function initMusicPlayer() {
+            
+            const audio = new Audio();
+            let playlist = [];
+            let currentIndex = -1;
+            let playMode = 'list'; // list, single, random
+            let isPlaying = false;
+            let isLoading = false;  // ★ 新增：标记是否正在加载播放URL
+            let progressUpdateInterval = null;
+            
+            // 获取 DOM 元素
+            const musicImg = document.querySelector('.music-img');
+            const musicName = document.querySelector('.music-name');
+            const playProgressCurrent = document.querySelector('.play-progress-current');
+            const playProgressTotal = document.querySelector('.play-progress-total');
+            const playProgressBar = document.querySelector('.play-progress-bar');
+            const progressFill = playProgressBar ? playProgressBar.querySelector('.progress-fill') : null;
+            const playMusicLike = document.querySelector('.play-music-like');
+            const playMusicLikeIcon = playMusicLike ? playMusicLike.querySelector('i') : null;
+            const playMusicPrev = document.querySelector('.play-music-prev');
+            const playMusicNext = document.querySelector('.play-music-next');
+            const playMusicCycle = document.querySelector('.play-music-cycle');
+            const playMusicCycleIcon = playMusicCycle ? playMusicCycle.querySelector('i') : null;
+            const playMusicCurrent = document.querySelector('.play-music-current');
+            const playMusicCurrentIcon = playMusicCurrent ? playMusicCurrent.querySelector('i') : null;
+            const volumeBar = document.querySelector('.play-music-volume-bar');
+            const playMusicListBtn = document.querySelector('.play-music-list');
+            const playMusicListBox = document.querySelector('.play-music-list-box');
+            const playMusicListContent = document.querySelector('.play-music-list-content');
+            
+            
+            let currentMusicId = null;
+            let totalDuration = 0;
+            
+            // ★将当前播放音乐 ID 暴露到全局作用域，供 iframe 访问
+            window.globalCurrentMusicId = null;
+            window.globalIsPlaying = () => isPlaying;
+            
+            // ★关键修改：将播放列表暴露到全局作用域（通过 getter 方法确保始终获取最新数据）
+            Object.defineProperty(window, 'globalPlaylist', {
+                get: function() {
+                    return playlist;
+                },
+                configurable: true
+            });
+            
+            window.getPlaylist = () => playlist;  // 直接获取播放列表
+            window.addToPlaylist = (music) => {
+                if (!playlist.some(m => m.music_id === music.music_id)) {
+                    playlist.push(music);
+                    renderPlaylist();
+                    return true;
+                }
+                return false;
+            };  // 添加到播放列表
+            
+            window.globalCurrentIndex = () => currentIndex;
+            window.setGlobalCurrentIndex = (index) => { currentIndex = index; };
+            
+            // 监听来自 iframe 的消息
+            window.addEventListener('message', function(e) {
+
+                // ★处理排行榜音乐播放
+                if (e.data && e.data.type === 'play_rank_music') {
+                    console.log('\n★★★ 收到排行榜播放请求 ★★★');
+                    console.log('音乐 ID:', e.data.music_id);
+                    console.log('榜单类型:', e.data.rank_type);
+                    
+                    if (typeof playMusicById === 'function') {
+                        // 排行榜播放：传递 rankType
+                        playMusicById(e.data.music_id, e.data.rank_type);
+                    } else {
+                        console.error('✗ playMusicById 函数不存在');
+                    }
+                    return;
+                }
+
+                // ★处理推荐页面音乐播放
+                if (e.data && e.data.type === 'play_music_url') {
+                    console.log('\n★★★ 收到推荐页播放请求 ★★★');
+                    console.log('音乐 ID:', e.data.music_id);
+
+                    // 切换播放/暂停逻辑：点同一首歌则切换状态
+                    if (typeof playMusicById === 'function') {
+                        const musicId = String(e.data.music_id || '');
+                        const currentId = String(currentMusicId || '');
+
+                        if (currentId === musicId && musicId !== '') {
+                            console.log('当前音乐已是播放歌曲，进行切换暂停/继续');
+                            if (isPlaying) {
+                                console.log('暂停当前音乐');
+                                audio.pause();
+                                isPlaying = false;
+                                updatePlayIcon();
+                                stopProgressUpdate();
+                            } else {
+                                console.log('继续播放当前音乐');
+                                audio.play().then(() => {
+                                    isPlaying = true;
+                                    updatePlayIcon();
+                                    startProgressUpdate();
+                                }).catch(err => {
+                                    console.error('恢复播放失败:', err);
+                                });
+                            }
+                            return;
+                        }
+
+                        // 否则按正常流程播放新歌曲
+                        playMusicById(musicId);
+                    } else {
+                        console.error('✗ playMusicById 函数不存在');
+                    }
+                    return;
+                }
+
+                // ★处理来自推荐页面的暂停/继续切换请求
+                if (e.data && e.data.type === 'toggle_play_pause') {
+                    console.log('\n收到推荐页切换播放/暂停请求');
+                    if (audio && audio.src) {
+                        if (isPlaying && !audio.paused) {
+                            console.log('暂停播放');
+                            audio.pause();
+                            isPlaying = false;
+                            stopProgressUpdate();
+                            updatePlayIcon();
+                        } else {
+                            console.log('继续播放');
+                            audio.play().then(() => {
+                                isPlaying = true;
+                                startProgressUpdate();
+                                updatePlayIcon();
+                            }).catch(error => {
+                                console.error('播放失败:', error);
+                                isPlaying = false;
+                                updatePlayIcon();
+                            });
+                        }
+                    }
+                    return;
+                }
+                
+                // ★处理来自子页面的音乐播放状态同步请求
+                if (e.data && e.data.type === 'music_playing') {
+                    console.log('收到音乐播放状态同步，ID:', e.data.music_id);
+                    return;
+                }
+
+                // ★处理来自分析页面的播放请求
+                if (e.data && e.data.type === 'play_music_from_analysis') {
+                    console.log('收到分析页面播放音乐消息，URL:', e.data.music_url);
+                    playMusicByUrl(e.data.music_url);
+                }
+
+                // ★处理来自分析页面的添加到播放列表请求
+                if (e.data && e.data.type === 'add_to_playlist_from_analysis') {
+                    console.log('收到分析页面添加到播放列表消息');
+                    addMusicToPlaylistFromAnalysis(e.data.music_url, e.data.music);
+                }
+
+                // ★处理来自排行榜的添加到播放列表请求
+                if (e.data && e.data.type === 'add_rank_music_to_playlist') {
+                    console.log('收到排行榜添加到播放列表消息，音乐 ID:', e.data.music_id);
+                    addRankMusicToPlaylistWithDetails(
+                        e.data.music_id, 
+                        e.data.music_name, 
+                        e.data.author, 
+                        e.data.album_cover
+                    );
+                }
+
+                if (e.data && e.data.type === 'clear_playlist') {
+                    console.log('收到清空播放列表消息');
+                    playlist = [];
+                    currentIndex = -1;
+                    renderPlaylist();
+                }
+
+                if (e.data && e.data.type === 'add_to_playlist_batch') {
+                    console.log('收到批量添加音乐消息:', e.data.music);
+                    addToPlaylistDirectly(e.data.music);
+                }
+
+                // ★新增：处理来自 my_music.html 的显示音乐信息请求（包含播放链接）
+                if (e.data && e.data.type === 'display_music_info') {
+                    console.log('\n★★★ 收到我的音乐页面显示音乐信息请求 ★★★');
+                    console.log('音乐数据:', e.data.music);
+                    
+                    const musicData = e.data.music;
+                    if (musicData && musicData.music_id) {
+                        // 更新当前播放音乐 ID
+                        currentMusicId = musicData.music_id;
+                        window.globalCurrentMusicId = String(musicData.music_id);
+                        
+                        // 更新播放区显示
+                        if (musicImg && musicData.cover) {
+                            musicImg.src = musicData.cover;
+                            console.log('✓ 已更新播放区图片:', musicData.cover);
+                        }
+                        
+                        if (musicName) {
+                            musicName.textContent = musicData.name || musicData.music_name || '未知歌曲';
+                            console.log('✓ 已更新播放区歌名:', musicData.name);
+                        }
+                        
+                        // ★ 关键：添加到全局播放列表
+                        if (!playlist.some(m => m.music_id === musicData.music_id)) {
+                            playlist.push(musicData);
+                            currentIndex = playlist.length - 1;
+                            renderPlaylist();
+                            console.log('✓ 已添加到全局播放列表，当前索引:', currentIndex);
+                        } else {
+                            // 如果已存在，直接跳到该条目
+                            const existingIndex = playlist.findIndex(m => m.music_id === musicData.music_id);
+                            currentIndex = existingIndex;
+                            console.log('⚠️ 已在播放列表中，跳到索引:', currentIndex);
+                        }
+                        
+                        console.log('✓ 音乐信息已显示到播放区，已添加到全局播放列表');
+                        
+                        // ★ 新增：直接使用爬取到的链接播放音乐
+                        if (musicData.url) {
+                            console.log('✓ 发现播放链接，准备播放:', musicData.url.substring(0, 100) + '...');
+                            
+                            // 停止当前播放并清理
+                            if (audio.src && audio.readyState > 0) {
+                                console.log('停止当前播放');
+                                audio.pause();
+                                audio.currentTime = 0;
+                            }
+                            
+                            // 先置为未播放状态
+                            isLoading = false;
+                            isPlaying = false;
+                            updatePlayIcon();
+                            
+                            // 设置音频源
+                            audio.src = musicData.url;
+                            
+                            audio.addEventListener('loadedmetadata', function onLoadedMetadata() {
+                                audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+                                console.log('音频元数据加载完成，duration:', audio.duration);
+                                
+                                audio.play().then(() => {
+                                    console.log('开始播放新歌曲');
+                                    // 让全局 play 事件监听器来处理状态同步
+                                }).catch(playError => {
+                                    console.error('✗ audio.play() 失败:', playError);
+                                    isPlaying = false;
+                                    updatePlayIcon();
+                                });
+                            }, { once: true });
+                            
+                            audio.addEventListener('error', function onError(e) {
+                                console.error('✗ 音频加载错误:', audio.error);
+                                audio.removeEventListener('error', onError);
+                            }, { once: true });
+                            
+                            audio.load();
+                        } else {
+                            console.warn('⚠️ 没有播放链接，只显示信息不播放');
+                        }
+                    }
+                    return;
+                }
+
+                // ★新增：处理来自 my_music.html 的直接播放请求
+                if (e.data && e.data.type === 'play_music') {
+                    console.log('\n★★★ 收到我的音乐页面直接播放请求 ★★★');
+                    console.log('音乐数据:', e.data.music);
+                    
+                    const musicData = e.data.music;
+                    if (musicData && musicData.music_id) {
+                        // 直接播放这首音乐
+                        playMusicById(musicData.music_id);
+                        
+                        // 同时添加到播放列表中
+                        if (!playlist.some(m => m.music_id === musicData.music_id)) {
+                            playlist.push(musicData);
+                            currentIndex = playlist.length - 1;
+                            renderPlaylist();
+                            console.log('✓ 已添加到播放列表，当前索引:', currentIndex);
+                        }
+                    }
+                    return;
+                }
+
+                // ★新增：处理来自 my_music.html 的添加到播放列表请求（保留for备用）
+                if (e.data && e.data.type === 'add_to_playlist') {
+                    console.log('收到我的音乐页面添加到播放列表消息:', e.data.music);
+                    const musicData = e.data.music;
+                    
+                    if (musicData && musicData.music_id) {
+                        // 检查是否已存在
+                        if (!playlist.some(m => m.music_id === musicData.music_id)) {
+                            playlist.push(musicData);
+                            renderPlaylist();
+                            console.log('✓ 已添加到播放列表');
+                        } else {
+                            console.log('⚠️ 该歌曲已在播放列表中');
+                        }
+                    }
+                    return;
+                }
+            });
+            
+            // 播放音乐函数（推荐页使用）
+            function playMusicById(musicId, rankType = null) {
+                console.log('\n=== 开始播放音乐 ===');
+                console.log('音乐 ID:', musicId);
+                console.log('rankType:', rankType);
+                
+                // ★ 新增：防止加载中时重复点击
+                if (isLoading) {
+                    console.warn('⚠️ 正在加载中，请稍候...');
+                    return;
+                }
+                
+                isLoading = true;  // 标记开始加载
+                updatePlayingControlsState(true);  // 禁用控制按钮
+                showLoadingIndicator();  // 显示加载指示器
+                
+                let endpoint, method, body;
+                
+                if (!rankType) {
+                    // ★ 推荐页面（main-content-two 和 main-content-three）
+                    // 使用直接爬虫方式：/music/play/{music_id}/
+                    endpoint = `/music/play/${musicId}/`;
+                    method = 'GET';
+                    body = null;
+                    console.log('检测到推荐页面，使用直接爬虫方式');
+                } else {
+                    // ★ 排行榜页面（main-two）
+                    // 使用排行榜搜索方式：/play_music_url/
+                    const isNewsong = rankType === 'newsong';
+                    endpoint = isNewsong ? '/play_newsong_music_url/' : '/play_music_url/';
+                    method = 'POST';
+                    body = JSON.stringify({
+                        music_id: musicId.toString(),
+                        rank_type: rankType
+                    });
+                    console.log('检测到排行榜页面，使用排行榜搜索方式');
+                    console.log('榜单类型:', rankType);
+                }
+                
+                console.log(`发送 ${method} 请求到 ${endpoint}`);
+                
+                const fetchOptions = {
+                    method: method,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                };
+                
+                if (method === 'POST') {
+                    fetchOptions.headers['Content-Type'] = 'application/json';
+                    fetchOptions.body = body;
+                }
+                
+                fetch(endpoint, fetchOptions)
+                .then(response => {
+                    console.log('收到响应，状态码:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('\n收到播放响应数据:');
+                    console.log('success:', data.success);
+                    console.log('msg:', data.msg);
+                    console.log('play_url:', data.play_url ? data.play_url.substring(0, 100) + '...' : '无');
+                    console.log('music_id:', data.music_id);
+                    console.log('music_name:', data.music_name);
+                    console.log('=========================\n');
+                    
+                    // ★新增★：验证 play_url 格式
+                    if (typeof data.play_url !== 'string' || data.play_url.trim() === '') {
+                        throw new Error('play_url 无效：' + (data.play_url || '空值'));
+                    }
+                    
+                    if (data.success && data.play_url) {
+                        handlePlaySuccess(data);
+                    } else {
+                        throw new Error(data.msg || '获取播放链接失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('\n✗✗✗ 播放音乐失败！');
+                    console.error('错误信息:', error.message);
+                    console.error('音乐 ID:', musicId);
+                    console.error('Rank Type:', rankType);
+                    console.error('完整错误对象:', error);
+                    alert('播放音乐失败：' + error.message);
+                })
+                .finally(() => {
+                    isLoading = false;  // 加载完成，标记为未加载
+                    updatePlayingControlsState(false);  // 启用控制按钮
+                    hideLoadingIndicator();  // 隐藏加载指示器
+                });
+            }
+            
+            // ★关键修改：将 playMusicById 暴露到全局作用域
+            window.playMusicById = playMusicById;
+            
+            // ★根据 URL 播放音乐的函数
+            function playMusicByUrl(musicUrl) {
+                console.log('\n=== 根据 URL 播放音乐 ===');
+                
+                if (audio.src && audio.readyState > 0) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+                
+                musicName.textContent = '未知歌曲';
+                audio.src = musicUrl;
+                audio.load();
+                audio.play().then(() => {
+                    isPlaying = true;
+                    updatePlayIcon();
+                    startProgressUpdate();
+                }).catch(error => {
+                    console.error('✗ 播放失败:', error);
+                });
+            }
+            
+            // ★从分析页面添加音乐到播放列表的函数
+            function addMusicToPlaylistFromAnalysis(musicUrl, musicInfo = null) {
+                console.log('\n=== 添加音乐到播放列表 ===');
+                
+                if (musicInfo) {
+                    const exists = playlist.some(item => item.music_id === musicInfo.music_id);
+                    if (!exists) {
+                        playlist.push(musicInfo);
+                    }
+                    
+                    // 调用后端接口保存到数据库
+                    if (musicInfo.music_id && !musicInfo.music_id.startsWith('temp_')) {
+                        fetch('/api/add_to_playlist/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({
+                                music_id: musicInfo.music_id
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('后端保存结果:', data);
+                            if (data.success) {
+                                console.log('✓ 音乐已保存到播放列表');
+                            } else {
+                                console.error('✗ 后端保存失败:', data.msg);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('✗ 请求后端失败:', error);
+                        });
+                    }
+                } else {
+                    const musicItem = {
+                        music_id: 'temp_' + Date.now(),
+                        name: '分析歌曲',
+                        author: '未知歌手',
+                        cover: '/static/imgs/default_album_cover.jpg',
+                        url: musicUrl
+                    };
+                    
+                    const exists = playlist.some(item => item.url === musicUrl);
+                    if (!exists) {
+                        playlist.push(musicItem);
+                    }
+                }
+                
+                currentIndex = playlist.length - 1;
+                renderPlaylist();
+            }
+            
+            // ★添加排行榜音乐到播放列表的函数
+            function addRankMusicToPlaylistWithDetails(musicId, musicName, author, albumCover) {
+                console.log('\n=== 添加排行榜音乐到播放列表 ===');
+                
+                const musicItem = {
+                    music_id: musicId,
+                    name: musicName || '未知歌曲',
+                    author: author || '未知歌手',
+                    cover: albumCover || '/static/imgs/default_album_cover.jpg',
+                    url: ''
+                };
+                
+                const exists = playlist.some(item => item.music_id === musicId);
+                if (!exists) {
+                    playlist.push(musicItem);
+                }
+                
+                // 调用后端接口保存到数据库
+                fetch('/api/add_to_playlist/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        music_id: musicId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('后端保存结果:', data);
+                    if (data.success) {
+                        console.log('✓ 音乐已保存到播放列表');
+                    } else {
+                        console.error('✗ 后端保存失败:', data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('✗ 请求后端失败:', error);
+                });
+                
+                currentIndex = playlist.length - 1;
+                renderPlaylist();
+            }
+            
+            // 处理播放成功的公共函数
+            function handlePlaySuccess(data) {
+                console.log('\n=== 处理播放成功 ===');
+                console.log('播放链接:', data.play_url ? data.play_url.substring(0, 100) + '...' : '无');
+                console.log('音乐名称:', data.music_name);
+                console.log('歌手:', data.author);
+                console.log('专辑封面:', data.album_cover);
+                
+                try {
+                    // ★ 先停止旧的进度更新
+                    stopProgressUpdate();
+                    
+                    currentMusicId = data.music_id;
+                    window.globalCurrentMusicId = String(data.music_id);
+                    
+                    // 通知所有 iframe 当前播放的音乐 ID
+                    const iframes = document.querySelectorAll('iframe');
+                    iframes.forEach(iframe => {
+                        if (iframe.contentWindow) {
+                            iframe.contentWindow.postMessage({
+                                type: 'music_playing',
+                                music_id: data.music_id
+                            }, '*');
+                        }
+                    });
+                    
+                    updatePlayBarUI(data);
+                    addToPlaylist(data);
+                    
+                    if (!audio) {
+                        console.error('✗ audio 对象不存在');
+                        return;
+                    }
+                    
+                    // ★ 先停止当前播放并清理
+                    if (audio.src && audio.readyState > 0) {
+                        console.log('停止当前播放');
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }
+                    
+                    // ★ 先置为未播放状态，避免进度条更新冲突
+                    isPlaying = false;
+                    updatePlayIcon();
+                    
+                    audio.src = data.play_url;
+                    
+                    // ★新增★：监听音频错误事件
+                    const errorHandler = function(e) {
+                        console.error('✗ 音频加载或播放错误:', e);
+                        console.error('错误代码:', audio.error ? audio.error.code : '未知');
+                        console.error('错误消息:', audio.error ? audio.error.message : '未知');
+                        console.error('当前 src:', audio.src);
+                        isPlaying = false;
+                        updatePlayIcon();
+                        stopProgressUpdate();
+                        alert('播放失败：无法加载或播放音频文件。可能是网络问题或音频链接无效。');
+                    };
+                    audio.addEventListener('error', errorHandler, { once: true });
+                    
+                    audio.addEventListener('loadedmetadata', function onLoadedMetadata() {
+                        audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+                        audio.removeEventListener('error', errorHandler);
+                        console.log('音频元数据加载完成，duration:', audio.duration);
+                        
+                        audio.play().then(() => {
+                            console.log('开始播放新歌曲');
+                            
+                            // ★新增★：更新播放点击数
+                            updateMusicClickCount(data.music_id, data.rank_type || 'newsong');
+                            
+                            // 【新增】记录播放到用户喜爱数据库
+                            recordMusicPlayToUserDatabase(data.music_id, data.music_name);
+                            
+                            // 注意：不在这里设置 isPlaying 和调用 startProgressUpdate，
+                            // 让全局 play 事件监听器来处理状态同步，避免重复操作
+                        }).catch(playError => {
+                            console.error('✗ audio.play() 失败:', playError);
+                            // 播放失败时才手动设置状态
+                            isPlaying = false;
+                            updatePlayIcon();
+                            stopProgressUpdate();
+                        });
+                    }, { once: true });
+                    
+                    audio.addEventListener('error', function onError(e) {
+                        console.error('✗ 音频加载错误:', audio.error);
+                        audio.removeEventListener('error', onError);
+                    }, { once: true });
+                    
+                    audio.load();
+                    
+                } catch (error) {
+                    console.error('✗ handlePlaySuccess 函数出错:', error);
+                    alert('处理播放数据时出错：' + error.message);
+                }
+            }
+            
+            // 更新播放栏 UI
+            function updatePlayBarUI(data) {
+                console.log('\n=== 更新播放栏 UI ===');
+                console.log('接收到的数据:', data);
+                console.log('is_liked 字段:', data.is_liked);
+                
+                if (musicImg && data.album_cover) {
+                    musicImg.src = data.album_cover;
+                }
+                
+                if (musicName && data.music_name) {
+                    musicName.textContent = data.music_name;
+                }
+                
+                // ★关键修改★：更新喜爱状态
+                const isLiked = data.is_liked || false;
+                console.log('设置喜爱状态：', isLiked);
+                console.log('喜爱图标元素:', playMusicLikeIcon);
+                updateLikeIcon(isLiked);
+                
+                window.currentMusicInfo = {
+                    music_id: data.music_id,
+                    music_name: data.music_name,
+                    author: data.author,
+                    author_id: data.author_id,
+                    album: data.album,
+                    album_cover: data.album_cover
+                };
+                console.log('=====================================\n');
+            }
+            
+            // 更新喜爱图标
+            function updateLikeIcon(isLiked) {
+                if (!playMusicLikeIcon) {
+                    console.error('✗ 喜爱图标元素不存在');
+                    return;
+                }
+                
+                console.log('更新喜爱图标：', isLiked);
+                console.log('当前图标类名:', playMusicLikeIcon.className);
+                
+                if (isLiked) {
+                    console.log('设置为已喜爱状态（红色）');
+                    playMusicLikeIcon.className = 'iconfont icon-xiai';
+                    playMusicLikeIcon.style.color = '#ff4d4f';
+                    playMusicLike.title = '取消喜爱';
+                } else {
+                    console.log('设置为未喜爱状态（灰色）');
+                    playMusicLikeIcon.className = 'iconfont icon-xiai';
+                    playMusicLikeIcon.style.color = '';
+                    playMusicLike.title = '喜爱';
+                }
+                
+                console.log('更新后图标类名:', playMusicLikeIcon.className);
+                console.log('更新后图标颜色:', playMusicLikeIcon.style.color);
+            }
+            
+            function updatePlayIcon() {
+                if (!playMusicCurrentIcon) return;
+                
+                if (isPlaying) {
+                    playMusicCurrentIcon.className = 'iconfont icon-zanting';
+                } else {
+                    playMusicCurrentIcon.className = 'iconfont icon-bofangyinle';
+                }
+            }
+            
+            // 添加到播放列表
+            function addToPlaylist(data) {
+                const exists = playlist.some(item => item.music_id === data.music_id);
+                
+                if (!exists) {
+                    playlist.push({
+                        music_id: data.music_id,
+                        name: data.music_name,
+                        author: data.author,
+                        cover: data.album_cover,
+                        url: data.play_url
+                    });
+                }
+                
+                currentIndex = playlist.findIndex(item => item.music_id === data.music_id);
+                
+                // 调用后端接口保存到数据库
+                fetch('/api/add_to_playlist/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        music_id: data.music_id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('后端保存结果:', data);
+                    if (data.success) {
+                        console.log('✓ 音乐已保存到播放列表');
+                    } else {
+                        console.error('✗ 后端保存失败:', data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('✗ 请求后端失败:', error);
+                });
+                
+                renderPlaylist();
+            }
+            
+            // 直接添加到播放列表
+            function addToPlaylistDirectly(music) {
+                const exists = playlist.some(item => item.music_id === music.music_id);
+                if (!exists) {
+                    playlist.push({
+                        music_id: music.music_id,
+                        name: music.music_name,
+                        author: music.author,
+                        cover: music.album_cover,
+                        url: music.url || ''
+                    });
+                }
+                
+                // 调用后端接口保存到数据库
+                fetch('/api/add_to_playlist/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        music_id: music.music_id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('后端保存结果:', data);
+                    if (data.success) {
+                        console.log('✓ 音乐已保存到播放列表');
+                    } else {
+                        console.error('✗ 后端保存失败:', data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('✗ 请求后端失败:', error);
+                });
+                
+                renderPlaylist();
+            }
+            
+            // 渲染播放列表
+            function renderPlaylist() {
+                if (!playMusicListContent) return;
+                
+                playMusicListContent.innerHTML = '';
+                
+                if (playlist.length === 0) {
+                    playMusicListContent.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">播放列表为空</div>';
+                    return;
+                }
+                
+                playlist.forEach((item, index) => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'play-music-list-item';
+                    itemEl.style.cssText = 'display: flex; align-items: center; padding: 8px; cursor: pointer; border-bottom: 1px solid #555;';
+                    
+                    if (index === currentIndex) {
+                        itemEl.style.backgroundColor = '#333';
+                    }
+                    
+                    itemEl.innerHTML = `
+                        <img src="${item.cover}" alt="${item.name}" class="list-cover" style="width: 40px; height: 40px; margin-right: 10px; border-radius: 4px;">
+                        <div style="flex: 1; overflow: hidden;">
+                            <div style="color: #ccc; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</div>
+                            <div style="color: #999; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.author}</div>
+                        </div>
+                    `;
+                    
+                    itemEl.onclick = () => playSpecificMusic(index);
+                    playMusicListContent.appendChild(itemEl);
+                });
+            }
+            
+            // 播放指定音乐（从播放列表直接调用，不查数据库）
+            function playSpecificMusic(index) {
+                console.log('\n=== 播放指定位置的音乐 ===');
+                console.log('索引:', index, '播放列表长度:', playlist.length);
+                
+                if (index < 0 || index >= playlist.length) {
+                    console.error('✗ 索引超出范围');
+                    return;
+                }
+                
+                const item = playlist[index];
+                console.log('要播放的音乐:', item.name, 'ID:', item.music_id);
+                console.log('本地项目数据:', item);
+                
+                // ★ 先用本地数据更新 UI（不查库）
+                currentMusicId = item.music_id;
+                window.globalCurrentMusicId = String(item.music_id);
+                currentIndex = index;
+                
+                if (musicImg && item.cover) musicImg.src = item.cover;
+                if (musicName && item.name) musicName.textContent = item.name;
+                
+                renderPlaylist();
+                
+                // ★关键修改★：重置加载状态，确保新请求能被执行
+                // 这样即使前一个请求还在加载中，新的播放请求也能执行
+                isLoading = false;
+                hideLoadingIndicator();
+                
+                // ★ 只调用爬虫获取播放URL，然后播放
+                // 使用 playMusicById 来统一处理播放逻辑
+                playMusicById(item.music_id);
+            }
+            
+            // ==================== 排行榜音乐播放专用函数 ====================
+            window.playRankMusicById = function(musicId, rankType) {
+                console.log('\n========== 排行榜音乐播放 ==========');
+                console.log('音乐 ID:', musicId);
+                console.log('排行榜类型:', rankType);
+                
+                // ★新增：防止加载中时重复点击
+                if (isLoading) {
+                    console.warn('⚠️ 正在加载中，请稍候...');
+                    return;
+                }
+                
+                isLoading = true;  // 标记开始加载
+                updatePlayingControlsState(true);  // 禁用控制按钮
+                showLoadingIndicator();  // 显示加载指示器
+                
+                // ★关键修改★：新歌榜使用专用接口 /play_newsong_music_url/
+                // 其他榜单使用 /play_music_url/ 接口
+                const isNewsong = rankType === 'newsong';
+                const endpoint = isNewsong ? '/play_newsong_music_url/' : '/play_music_url/';
+                
+                console.log('★ 调用', endpoint, '接口');
+                
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        music_id: musicId.toString(),
+                        rank_type: rankType  // 传递排行榜类型
+                    })
+                })
+                .then(response => {
+                    console.log('收到响应，状态码:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('\n收到播放响应数据:');
+                    console.log('success:', data.success);
+                    console.log('play_url:', data.play_url ? data.play_url.substring(0, 100) + '...' : '无');
+                    console.log('music_name:', data.music_name);
+                    console.log('=========================\n');
+                    
+                    if (data.success && data.play_url) {
+                        handlePlaySuccess(data);
+                    } else {
+                        throw new Error(data.msg || '获取播放链接失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('✗ 排行榜播放失败:', error);
+                    alert('播放音乐失败，请稍后重试\n错误: ' + error.message);
+                })
+                .finally(() => {
+                    isLoading = false;  // 加载完成
+                    updatePlayingControlsState(false);  // 启用控制按钮
+                    hideLoadingIndicator();  // 隐藏加载指示器
+                });
+            };
+            
+            // 进度条更新函数
+            function startProgressUpdate() {
+                if (progressUpdateInterval) {
+                    clearInterval(progressUpdateInterval);
+                }
+                
+                progressUpdateInterval = setInterval(() => {
+                    if (isPlaying && !audio.paused) {
+                        updateProgressBar();
+                    }
+                }, 800);  // ★ 改为800ms更新一次，避免频繁波动
+            }
+            
+            function stopProgressUpdate() {
+                if (progressUpdateInterval) {
+                    clearInterval(progressUpdateInterval);
+                    progressUpdateInterval = null;
+                    console.log('已停止进度更新');
+                }
+            }
+            
+            function updateProgressBar() {
+                if (!progressFill || !playProgressCurrent || !playProgressTotal) return;
+                
+                // ★ 更严格的检查条件，避免在不播放时更新
+                if (!audio.src || audio.paused || !isPlaying || audio.readyState < 2) {
+                    return;
+                }
+                
+                const currentTime = audio.currentTime || 0;
+                const duration = audio.duration || 0;
+                
+                if (duration > 0 && currentTime >= 0) {
+                    const progressPercent = Math.min(100, Math.max(0, (currentTime / duration) * 100));
+                    progressFill.style.width = `${progressPercent}%`;
+                    
+                    playProgressCurrent.textContent = formatTime(currentTime);
+                    playProgressTotal.textContent = formatTime(duration);
+                }
+            }
+            
+            function formatTime(seconds) {
+                if (!seconds || isNaN(seconds)) return '00:00';
+                
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                
+                return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+            
+            // ★新增：禁用或启用播放控制按钮（防止在加载时重复点击）
+            function updatePlayingControlsState(disabled) {
+                const controls = [
+                    playMusicCurrent,
+                    playMusicPrev,
+                    playMusicNext,
+                    playMusicCycle,
+                    playMusicLike
+                ];
+                
+                controls.forEach(control => {
+                    if (control) {
+                        if (disabled) {
+                            control.style.opacity = '0.5';
+                            control.style.cursor = 'not-allowed';
+                            control.style.pointerEvents = 'none';
+                        } else {
+                            control.style.opacity = '1';
+                            control.style.cursor = 'pointer';
+                            control.style.pointerEvents = 'auto';
+                        }
+                    }
+                });
+            }
+            
+            // ★新增：显示加载指示器
+            function showLoadingIndicator() {
+                let indicator = document.getElementById('musicLoadingIndicator');
+                if (!indicator) {
+                    indicator = document.createElement('div');
+                    indicator.id = 'musicLoadingIndicator';
+                    indicator.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(0, 0, 0, 0.8);
+                        color: white;
+                        padding: 30px 50px;
+                        border-radius: 10px;
+                        font-size: 16px;
+                        z-index: 10000;
+                        text-align: center;
+                    `;
+                    indicator.innerHTML = `
+                        <div style="margin-bottom: 15px;">
+                            <i class="iconfont" style="font-size: 30px; display: inline-block; animation: spin 1s linear infinite;">➤</i>
+                        </div>
+                        <div>正在加载音乐...</div>
+                    `;
+                    document.body.appendChild(indicator);
+                    
+                    // 添加旋转动画样式
+                    if (!document.querySelector('style[data-loading-animation]')) {
+                        const style = document.createElement('style');
+                        style.setAttribute('data-loading-animation', '');
+                        style.textContent = `
+                            @keyframes spin {
+                                from { transform: rotate(0deg); }
+                                to { transform: rotate(360deg); }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+                }
+                indicator.style.display = 'flex';
+                indicator.style.flexDirection = 'column';
+                indicator.style.alignItems = 'center';
+                indicator.style.justifyContent = 'center';
+            }
+            
+            // ★新增：隐藏加载指示器
+            function hideLoadingIndicator() {
+                const indicator = document.getElementById('musicLoadingIndicator');
+                if (indicator) {
+                    indicator.style.display = 'none';
+                }
+            }
+            
+            // 播放/暂停按钮点击事件
+            if (playMusicCurrent) {
+                console.log('✓ 绑定播放/暂停按钮事件');
+                playMusicCurrent.onclick = () => {
+                    console.log('=== 播放/暂停按钮被点击 ===');
+                    console.log('isPlaying:', isPlaying);
+                    console.log('audio.paused:', audio.paused);
+                    console.log('audio.src:', audio.src ? '有' : '无');
+                    
+                    if (!audio.src) {
+                        console.log('✗ 没有音频源，无法播放');
+                        return;
+                    }
+                    
+                    try {
+                        if (isPlaying) {
+                            // 当前正在播放，执行暂停
+                            console.log('当前正在播放，执行暂停');
+                            audio.pause();
+                            // 注意：不要在这里设置 isPlaying 和 updatePlayIcon，
+                            // 让 audio 的 pause 事件监听器来处理状态同步
+                        } else {
+                            // 当前已暂停，执行播放
+                            console.log('当前已暂停，执行播放');
+                            
+                            const playPromise = audio.play();
+                            
+                            if (playPromise !== undefined) {
+                                playPromise.then(() => {
+                                    console.log('播放成功');
+                                    // 注意：不要在这里设置 isPlaying，
+                                    // 让 audio 的 play 事件监听器来处理状态同步
+                                }).catch(error => {
+                                    console.error('播放失败:', error);
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.error('播放/暂停操作出错:', error);
+                    }
+                    console.log('===============================\n');
+                };
+            } else {
+                console.error('✗ 未找到播放/暂停按钮 (.play-music-current)');
+            }
+            
+            // ★新增：上一首按钮
+            if (playMusicPrev) {
+                console.log('✓ 绑定上一首按钮事件');
+                playMusicPrev.onclick = () => {
+                    console.log('\n=== 点击上一首按钮 ===');
+                    if (playlist.length === 0) {
+                        console.log('播放列表为空');
+                        return;
+                    }
+                    
+                    let prevIndex = currentIndex > 0 ? currentIndex - 1 : playlist.length - 1;
+                    console.log('当前索引:', currentIndex, '上一首索引:', prevIndex);
+                    playSpecificMusic(prevIndex);
+                };
+            }
+            
+            // ★新增：下一首按钮
+            if (playMusicNext) {
+                console.log('✓ 绑定下一首按钮事件');
+                playMusicNext.onclick = () => {
+                    console.log('\n=== 点击下一首按钮 ===');
+                    if (playlist.length === 0) {
+                        console.log('播放列表为空');
+                        return;
+                    }
+                    
+                    let nextIndex = currentIndex < playlist.length - 1 ? currentIndex + 1 : 0;
+                    console.log('当前索引:', currentIndex, '下一首索引:', nextIndex);
+                    playSpecificMusic(nextIndex);
+                };
+            }
+            
+            // 喜爱按钮点击事件
+            if (playMusicLike) {
+                console.log('✓ 绑定喜爱按钮事件');
+                playMusicLike.onclick = (e) => {
+                    e.stopPropagation();
+                    console.log('\n========== 点击喜爱按钮 ==========');
+                    console.log('当前音乐 ID:', currentMusicId);
+                    
+                    if (!currentMusicId) {
+                        console.log('✗ 当前没有播放音乐');
+                        return;
+                    }
+                    
+                    // 发送 POST 请求到后端 - 切换喜爱状态
+                    fetch('/music/toggle_like/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            music_id: currentMusicId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('返回数据:', data);
+                        if (data.success) {
+                            console.log('✓ 喜爱状态更新成功，is_liked:', data.is_liked);
+                            // 更新喜爱图标
+                            updateLikeIcon(data.is_liked);
+                            
+                            // ★新增★：如果是点赞（is_liked为true），调用API更新喜爱计数
+                            if (data.is_liked) {
+                                updateMusicLikeCount(currentMusicId, 'newsong');
+                            }
+                            
+                            alert(data.is_liked ? '✓ 已添加到喜爱' : '✗ 已取消喜爱');
+                        } else {
+                            console.error('✗ 喜爱操作失败:', data.msg);
+                            alert(data.msg || '操作失败，请重试');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('✗ 请求错误:', error);
+                        alert('网络错误，请重试');
+                    });
+                    
+                    console.log('====================================\n');
+                };
+            } else {
+                console.error('✗ 未找到喜爱按钮 (.play-music-like)');
+            }
+            
+            // 播放模式切换按钮
+            if (playMusicCycle) {
+                console.log('✓ 绑定播放模式切换按钮事件');
+                playMusicCycle.onclick = () => {
+                    console.log('播放模式切换按钮被点击，当前模式:', playMode);
+                    if (playMode === 'list') {
+                        playMode = 'single';
+                        if (playMusicCycleIcon) {
+                            playMusicCycleIcon.className = 'iconfont icon-danquxunhuan';
+                            playMusicCycle.title = '单曲循环';
+                        }
+                    } else if (playMode === 'single') {
+                        playMode = 'random';
+                        if (playMusicCycleIcon) {
+                            playMusicCycleIcon.className = 'iconfont icon-suijibofang';
+                            playMusicCycle.title = '随机播放';
+                        }
+                    } else {
+                        playMode = 'list';
+                        if (playMusicCycleIcon) {
+                            playMusicCycleIcon.className = 'iconfont icon-bofang-xunhuanbofang';
+                            playMusicCycle.title = '列表循环';
+                        }
+                    }
+                    console.log('播放模式已切换为:', playMode);
+                };
+            } else {
+                console.error('✗ 未找到播放模式切换按钮 (.play-music-cycle)');
+            }
+            
+            // 音量控制
+            if (volumeBar) {
+                let dragging = false;
+                
+                volumeBar.addEventListener('mousedown', (e) => {
+                    dragging = true;
+                    updateVolume(e);
+                });
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (!dragging) return;
+                    e.preventDefault();
+                    updateVolume(e);
+                });
+                
+                document.addEventListener('mouseup', () => {
+                    dragging = false;
+                });
+                
+                function updateVolume(e) {
+                    const rect = volumeBar.getBoundingClientRect();
+                    const percentage = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                    
+                    volumeBar.style.setProperty('--volume', percentage);
+                    audio.volume = percentage;
+                }
+            }
+            
+            // 显示/隐藏播放列表
+            if (playMusicListBtn) {
+                playMusicListBtn.onclick = () => {
+                    if (playMusicListBox) {
+                        playMusicListBox.style.display = playMusicListBox.style.display === 'block' ? 'none' : 'block';
+                    }
+                };
+            }
+            
+            // ★新增：监听 audio 的 pause 事件，同步暂停状态
+            audio.addEventListener('pause', () => {
+                console.log('★ Audio pause 事件触发');
+                isPlaying = false;
+                updatePlayIcon();
+                stopProgressUpdate();
+            });
+            
+            // ★新增：监听 audio 的 play 事件，同步播放状态
+            audio.addEventListener('play', () => {
+                console.log('★ Audio play 事件触发');
+                isPlaying = true;
+                updatePlayIcon();
+                startProgressUpdate();
+            });
+            
+            // 音频播放结束自动播放下一首
+            audio.addEventListener('ended', () => {
+                console.log('\n========== 音乐播放结束 ==========');
+                console.log('当前播放模式:', playMode);
+                console.log('播放列表长度:', playlist.length);
+                console.log('当前索引:', currentIndex);
+                
+                if (playlist.length === 0) {
+                    console.log('✗ 播放列表为空，无法播放下一首');
+                    return;
+                }
+                
+                let nextIndex;
+                
+                if (playMode === 'single') {
+                    // 单曲循环：重新播放当前歌曲
+                    console.log('单曲循环模式：重新播放当前歌曲');
+                    nextIndex = currentIndex;
+                    
+                    audio.currentTime = 0;
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        startProgressUpdate();
+                        updatePlayIcon();
+                    }).catch(error => {
+                        console.error('重放失败:', error);
+                        isPlaying = false;
+                    });
+                    
+                } else if (playMode === 'random') {
+                    // 随机播放：随机选择一首不同于当前的歌曲
+                    console.log('随机播放模式');
+                    
+                    if (playlist.length > 1) {
+                        do {
+                            nextIndex = Math.floor(Math.random() * playlist.length);
+                        } while (nextIndex === currentIndex);
+                    } else {
+                        nextIndex = 0;
+                    }
+                    
+                    console.log('选中随机歌曲，索引:', nextIndex);
+                    playSpecificMusic(nextIndex);
+                    
+                } else {
+                    // 列表循环（默认）：播放下一首
+                    console.log('列表循环模式');
+                    nextIndex = currentIndex < playlist.length - 1 ? currentIndex + 1 : 0;
+                    console.log('下一首索引:', nextIndex);
+                    playSpecificMusic(nextIndex);
+                }
+                
+                console.log('=====================================\n');
+            });
+            
+            console.log('✓ 音乐播放器初始化完成');
+            console.log('  - audio 对象:', audio);
+            console.log('  - 播放模式:', playMode);
+        }
+        
+        // 页面加载完成后初始化音乐播放器
+        $(document).ready(function() {
+            console.log('=== 页面加载完成 ===');
+            checkLoginStatusAndRender();
+            initMusicPlayer();
+        });
+    </script>
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>
