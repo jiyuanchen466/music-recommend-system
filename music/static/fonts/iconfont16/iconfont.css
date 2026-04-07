@@ -1,0 +1,34 @@
+@font-face {
+  font-family: "iconfont"; /* Project id  */
+  src: url('iconfont.ttf?t=1774942326419') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-tianjia:before {
+  content: "\e740";
+}
+
+.icon-bofangyinle:before {
+  content: "\e672";
+}
+
+/* 添加悬停效果样式 */
+.icon-bofangyinle,
+.icon-tianjia {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.table-actions:hover .icon-bofangyinle,
+.table-actions:hover .icon-tianjia {
+  opacity: 1;
+}

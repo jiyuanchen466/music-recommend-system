@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "32414825",
+      "name": "添加",
+      "font_class": "tianjia",
+      "unicode": "e740",
+      "unicode_decimal": 59200
+    },
+    {
+      "icon_id": "37687928",
+      "name": "播放音乐",
+      "font_class": "bofangyinle",
+      "unicode": "e672",
+      "unicode_decimal": 58994
+    }
+  ]
+}

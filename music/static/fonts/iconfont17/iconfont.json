@@ -1,0 +1,65 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "658956",
+      "name": "图片",
+      "font_class": "tupian",
+      "unicode": "e67f",
+      "unicode_decimal": 59007
+    },
+    {
+      "icon_id": "809963",
+      "name": "点赞",
+      "font_class": "dianzan",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    },
+    {
+      "icon_id": "1447766",
+      "name": "音频",
+      "font_class": "yinpin",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "5121522",
+      "name": "位置",
+      "font_class": "weizhi",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "7192353",
+      "name": "T-颜色",
+      "font_class": "T-yanse",
+      "unicode": "e720",
+      "unicode_decimal": 59168
+    },
+    {
+      "icon_id": "9122149",
+      "name": "录音",
+      "font_class": "luyin",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "35075134",
+      "name": "设置-字体放大",
+      "font_class": "shezhi-zitifangda",
+      "unicode": "e666",
+      "unicode_decimal": 58982
+    },
+    {
+      "icon_id": "35075135",
+      "name": "设置-字体缩小",
+      "font_class": "shezhi-zitisuoxiao",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    }
+  ]
+}
