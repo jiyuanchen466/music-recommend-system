@@ -262,6 +262,4 @@ HMM 推荐位于 music/markov_model.py，当前流程：
 - 增加 requirements.txt 或 pyproject.toml 固化依赖版本。
 - 给核心推荐接口记录输入输出样本，便于回归验证。
 
----
-
-如需我继续补一份“接口测试手册（Postman 版）”或“部署文档（Windows + MySQL + Nginx）”，可以在本 README 基础上直接扩展。
+---
